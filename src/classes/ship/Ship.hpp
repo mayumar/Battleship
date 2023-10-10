@@ -1,7 +1,7 @@
 #ifndef SHIP_HPP
 #define SHIP_HPP
 
-#include <tuple>
+#include <vector>
 #include <iostream>
 
 enum class Orientation{
@@ -19,16 +19,16 @@ class Ship{
     private:
         Type type_;
         Orientation orientation_;
-        std::tuple<char, int> coordsEdge1_;
-        std::tuple<char, int> coordsEdge2_;
+        std::vector<int> coordsEdge1_;
+        std::vector<int> coordsEdge2_;
 
     public:
-        Ship(Type type, Orientation orientation, std::tuple<char, int> coordsEdge1);
+        Ship(Type type, Orientation orientation, std::vector<int> coordsEdge1);
 
         inline Type getType(){return type_;}
         inline Orientation getOrientation(){return orientation_;}
-        inline std::tuple<char,int> getCoordsEdge1(){return coordsEdge1_;}
-        inline std::tuple<char,int> getCoordsEdge2(){return coordsEdge2_;}
+        inline std::vector<int> getCoordsEdge1(){return coordsEdge1_;}
+        inline std::vector<int> getCoordsEdge2(){return coordsEdge2_;}
 
         void printType();
         void printOrientation();

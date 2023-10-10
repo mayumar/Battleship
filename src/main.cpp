@@ -1,23 +1,23 @@
-#include "classes/Ship.hpp"
+#include "classes/ship/Ship.hpp"
+#include "classes/board/Board.hpp"
 #include <iostream>
 #include <vector>
 
 int main(){
-    std::vector<std::vector<char>> table(10, std::vector<char>(10, 'A'));
+    Board b;
 
-    for(int i = 0; i < table.size(); i++){
-        for(int j = 0; j < table[i].size(); j++){
-            std::cout << table[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
+    b.showBoard();
 
     Ship barquito(Type::LONG, Orientation::VERTICAL, {'A', 1});
 
-    std::cout << "Hola, soy un barquito de tipo ";
-    barquito.printType();
-    std::cout << " que esta en ";
-    barquito.printOrientation();
+    b.addShip(barquito);
+
+    b.showBoard();
+
+    // std::cout << "Hola, soy un barquito de tipo ";
+    // barquito.printType();
+    // std::cout << " que esta en ";
+    // barquito.printOrientation();
     //std::cout << " y mis coordenadas son desde (" << barquito.getCoordsEdge1() << ") hasta (" << barquito.getCoordsEdge2() <<")" << std::endl;
 
     return 0;
