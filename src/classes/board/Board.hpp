@@ -7,11 +7,15 @@
 class Board {
     private:
         std::vector<std::vector<char>> table_;
+        int ships_;
 
     public:
-        inline Board(){ table_ = std::vector<std::vector<char>>(10, std::vector<char>(10, 'A')); }
+        Board();
+        inline void setShips(int ships){ships_ = ships;}
+        inline int getShips(){return ships_;}
         void showBoard();
-        bool addShip(Ship newShip);
+        void setStartGame();
+        bool addShip(Ship &newShip);
 };
 
 #endif
