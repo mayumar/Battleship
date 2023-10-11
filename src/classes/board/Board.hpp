@@ -15,6 +15,7 @@ class Board {
         inline int getShips(){return ships_;}
         void showBoard();
         void setStartGame();
+        bool checkShipPosition(Ship &ship);
         bool addShip(Ship &newShip);
 };
 
