@@ -46,12 +46,20 @@ void Board::setStartGame(){
 bool Board::checkShipPosition(Ship &ship){
     if (ship.getOrientation() == Orientation::VERTICAL){
         for(int row = ship.getCoordsEdge1()[0]; row < ship.getCoordsEdge2()[0]; row++){
-            if(table_[row][ship.getCoordsEdge1()[1]+1] == 'B' || table_[row][ship.getCoordsEdge1()[1]-1] == 'B')
+            int coord = ship.getCoordsEdge1()[1]-1;
+            
+            if(coord < 0) coord = ship.getCoordsEdge1()[1];
+            
+            if(table_[row][ship.getCoordsEdge1()[1]+1] == 'B' || table_[row][coord] == 'B')
                 return false;
         }
     } else {
         for(int col = ship.getCoordsEdge1()[1]; col < ship.getCoordsEdge2()[1]; col++){
-            if(table_[ship.getCoordsEdge1()[0]+1][col] == 'B' || table_[ship.getCoordsEdge1()[0]-1][col] == 'B')
+            int coord = ship.getCoordsEdge1()[0];
+            
+            if(coord < 0) coord = ship.getCoordsEdge1()[0]+1;
+
+            if(table_[ship.getCoordsEdge1()[0]+1][col] == 'B' || table_[coord][col] == 'B')
                 return false;
         }
     }

@@ -26,13 +26,14 @@ int main(){
         std::cout << "Could not add ship 2" << std::endl;
     }
 
-    Ship barquito3(Type::LONG, Orientation::HORIZONTAL, {0, 0});
+    Ship barquito3(Type::LONG, Orientation::HORIZONTAL, {9, 0});
 
     if(b.addShip(barquito3)){
         std::cout << "Added ship 3" << std::endl;
     } else {
         std::cout << "Could not add ship 3" << std::endl;
     }
+
 
     std::cout << "Final board:" << std::endl;
     b.showBoard();
