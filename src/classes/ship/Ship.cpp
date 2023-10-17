@@ -36,11 +36,17 @@ Ship::Ship(Type type, Orientation orientation, std::vector<int> coordsEdge1){
 void Ship::printType(){
     if(type_ == Type::LONG){
         std::cout << "long";
+    }else if(type_ == Type::MEDIUM){
+        std::cout << "medium";
+    }else{
+        std::cout << "short";
     }
 }
 
 void Ship::printOrientation(){
     if(orientation_ == Orientation::VERTICAL){
         std::cout << "vertical";
+    }else{
+        std::cout << "horizontal";
     }
 }
