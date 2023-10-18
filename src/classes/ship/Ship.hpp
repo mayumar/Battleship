@@ -32,6 +32,7 @@ class Ship{
 
         void printType();
         void printOrientation();
+        void printShip();
 };
 
 #endif
