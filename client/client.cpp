@@ -10,9 +10,9 @@
 #include <time.h>
 #include <arpa/inet.h>
 
-#include "client.hpp"
+//#include "client.hpp"
 
-void main(){
+int main(){
     int clientSocket;
     struct sockaddr_in sockName;
     char buffer[250];
@@ -27,6 +27,20 @@ void main(){
         std::cerr << "No se puede abrir el socket del cliente" << std::endl;
         exit(-1);
     }
+
+    sockName.sin_family = AF_INET;
+	sockName.sin_port = htons(2000);
+	sockName.sin_addr.s_addr =  inet_addr("127.0.0.1"); //127.0.0.1
+
+	/* ------------------------------------------------------------------
+		Se solicita la conexión con el servidor
+	-------------------------------------------------------------------*/
+	sockNameLen = sizeof(sockName);
+	
+	if(connect(clientSocket, (struct sockaddr *)&sockName, sockNameLen) == -1){
+		perror ("Error de conexión");
+		exit(1);
+	}
 
     FD_ZERO(&auxfds);
     FD_ZERO(&readfds);
@@ -47,6 +61,8 @@ void main(){
             if(strcmp(buffer, "Demasiados clientes conectados\n") == 0 || strcmp(buffer,"Desconexión servidor\n") == 0)
                 end = true;
             
+            if(strcmp(buffer,"Desconexión servidor\n") == 0)
+                end = true;
         } else {
             if(FD_ISSET(0, &auxfds)){
                 bzero(buffer, sizeof(buffer));
@@ -61,4 +77,5 @@ void main(){
     }while(end);
 
     close(clientSocket);
+    return 0;
 }

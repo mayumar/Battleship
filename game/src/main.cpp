@@ -6,14 +6,11 @@
 #include <vector>
 
 int main(){
+    // srand(time(nullptr));
+    // Game game;
+    // game.createGame();
 
-    srand(time(nullptr));
-    
-    Game game;
-
-    game.createGame();
-
-    loginPass("1234");
+    setServer();
 
     return 0;
 }

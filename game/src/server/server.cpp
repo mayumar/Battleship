@@ -8,9 +8,9 @@
 #include <signal.h>
 #include <unistd.h>
 #include <time.h>
-#include <fstream>
 
 #include "server.hpp"
+#include "../commands/commands.hpp"
 
 #define MSG_SIZE 250
 #define MAX_CLIENTS 50
@@ -43,54 +43,9 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
 
 void manager(int signum){
     std::cout << std::endl << "Se ha recibido la señal siginit" << std::endl;
+    exit(-1);
     signal(SIGINT, manager);
-
     //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
-}
-
-bool loginUser(char user[]){
-    std::ifstream file("../src/files/users.txt");
-
-    if(!file){
-        std::cerr << "Error al abrir el fichero" << std::endl;
-        return false;
-    }
-
-    char line[200], *userBD, *delim = ";";
-
-    while (file.getline(line, sizeof(line))) {
-        userBD = strtok(line, delim);
-
-        if (userBD != nullptr) {
-            if (strcmp(userBD, user) == 0)
-                return true;
-        }
-    }
-
-    return false;
-}
-
-bool loginPass(char password[]){
-    std::ifstream file("../src/files/users.txt");
-
-    if(!file){
-        std::cerr << "Error al abrir el fichero" << std::endl;
-        return false;
-    }
-
-    char line[200], *userBD, *passwordBD, *delim = ";";
-
-    while (file.getline(line, sizeof(line))) {
-        char *userBD = strtok(line, delim);
-        char *passwordBD = strtok(nullptr, delim);
-
-        if (userBD != nullptr && passwordBD != nullptr) {
-            if (strcmp(passwordBD, password) == 0)
-                return true;
-        }
-    }
-
-    return false;
 }
 
 void setServer(){
@@ -129,7 +84,7 @@ void setServer(){
 
     if(bind(sd, (struct sockaddr *)&socnkName, sizeof(socnkName)) == -1){
         std::cerr << "Error al enlazar el socket" << std::endl;
-        exit(1);
+        exit(0);
     }
 
     fromLen = sizeof(from);
@@ -155,9 +110,7 @@ void setServer(){
         if(exitSelect > 0){
             for(i = 0; i < FD_SETSIZE; i++){
                 if(i == sd){
-                    if((newSd = accept(sd, (struct sockaddr *)&from, &fromLen)) == -1){
-                        std::cerr << "Error al aceptar peticiones" << std::endl;
-                    } else {
+                    if((newSd = accept(sd, (struct sockaddr *)&from, &fromLen)) != -1){
                         if(numClients < MAX_CLIENTS){
                             clientsArray[numClients] = newSd;
                             numClients++;
@@ -166,18 +119,20 @@ void setServer(){
                             send(newSd, buffer, sizeof(buffer), 0);
                             
                             //NECESARIO????
-                            for(j = 0; j < (numClients-1); j++){
-                                bzero(buffer, sizeof(buffer));
-                                sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
-                                send(clientsArray[j], buffer, sizeof(buffer), 0);
-                            }
+                            // for(j = 0; j < (numClients-1); j++){
+                            //     bzero(buffer, sizeof(buffer));
+                            //     sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
+                            //     send(clientsArray[j], buffer, sizeof(buffer), 0);
+                            // }
+
                         } else {
                             bzero(buffer, sizeof(buffer));
                             strcpy(buffer, "Demasiados clientes conectados\n");
                             send(newSd, buffer, sizeof(buffer), 0);
                             close(newSd);
                         }
-                    }
+                    } else std::cerr << "Error al aceptar peticiones" << std::endl;
+                    
                 } else if (i == 0) {
                     bzero(buffer, sizeof(buffer));
                     fgets(buffer, sizeof(buffer), stdin);
@@ -196,30 +151,19 @@ void setServer(){
                     }
                     //Mensajes que se quieran mandar a los clientes (implementar)
                 } else {
+                    //Server recibe datos
                     bzero(buffer, sizeof(buffer));
                     received = recv(i, buffer, sizeof(buffer), 0);
 
                     if(received > 0){
-                        if(strcmp(buffer, "SALIR\n") == 0){
+                        if(strcmp(buffer, "SALIR\n") == 0)
                             exitClient(i, &readfs, numClients, clientsArray);
-                        } else {
-                            sprintf(id, "<%d>: %s", i, buffer);
-                            bzero(buffer, sizeof(buffer));
-                            strcpy(buffer, id);
-                            std::cout << buffer << std::endl;
-
-                            for(j = 0; j < numClients; j++){
-                                if(clientsArray[j] != i)
-                                    send(clientsArray[j], buffer, sizeof(buffer), 0);
-                            }
-                        }
-                    }
-
-                    if(received == 0){
+                        else managedCommand(buffer, clientsArray[j]);
+                    } else if(received == 0){
                         std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;
                         exitClient(i, &readfs, numClients, clientsArray);
                     }
-                }
+                }      
             }
         }
     }
