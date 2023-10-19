@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <time.h>
+#include <fstream>
 
 #include "server.hpp"
 
@@ -45,6 +46,51 @@ void manager(int signum){
     signal(SIGINT, manager);
 
     //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
+}
+
+bool loginUser(char user[]){
+    std::ifstream file("../src/files/users.txt");
+
+    if(!file){
+        std::cerr << "Error al abrir el fichero" << std::endl;
+        return false;
+    }
+
+    char line[200], *userBD, *delim = ";";
+
+    while (file.getline(line, sizeof(line))) {
+        userBD = strtok(line, delim);
+
+        if (userBD != nullptr) {
+            if (strcmp(userBD, user) == 0)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+bool loginPass(char password[]){
+    std::ifstream file("../src/files/users.txt");
+
+    if(!file){
+        std::cerr << "Error al abrir el fichero" << std::endl;
+        return false;
+    }
+
+    char line[200], *userBD, *passwordBD, *delim = ";";
+
+    while (file.getline(line, sizeof(line))) {
+        char *userBD = strtok(line, delim);
+        char *passwordBD = strtok(nullptr, delim);
+
+        if (userBD != nullptr && passwordBD != nullptr) {
+            if (strcmp(passwordBD, password) == 0)
+                return true;
+        }
+    }
+
+    return false;
 }
 
 void setServer(){

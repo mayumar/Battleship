@@ -5,7 +5,8 @@
 
 void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[]);
 void manager(int signum);
-bool login(char usuario[], char password[]);
+bool loginUser(char user[]);
+bool loginPass(char password[]);
 void setServer();
 
 #endif
