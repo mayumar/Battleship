@@ -8,7 +8,6 @@
 #include <signal.h>
 #include <unistd.h>
 #include <time.h>
-#include <arpa/inet.h>
 
 #include "server.hpp"
 
@@ -48,7 +47,7 @@ void manager(int signum){
     //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
 }
 
-void main(){
+void setServer(){
     int sd, newSd;
     struct sockaddr_in socnkName, from;
     char buffer[MSG_SIZE];
