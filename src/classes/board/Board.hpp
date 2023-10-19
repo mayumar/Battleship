@@ -9,14 +9,17 @@ class Board {
         std::vector<std::vector<char>> table_;
         int ships_;
 
+    protected:
+        bool checkShipPosition(Ship &ship);
+        bool addShip(Ship &newShip);
+
     public:
         Board();
         inline void setShips(int ships){ships_ = ships;}
         inline int getShips(){return ships_;}
         void showBoard();
         void setStartGame();
-        bool checkShipPosition(Ship &ship);
-        bool addShip(Ship &newShip);
+        
 };
 
 #endif
