@@ -14,6 +14,8 @@ Ship::Ship(Type type, Orientation orientation, std::vector<int> coordsEdge1){
             coordsEdge2_[0] = coordsEdge1_[0]+3;
             coordsEdge2_[1] = coordsEdge1_[1];
         }
+
+        hits_ = std::vector<bool>(4, false);
     }else if(type_ == Type::MEDIUM){
         if(orientation_ == Orientation::HORIZONTAL){
             coordsEdge2_[0] = coordsEdge1_[0];
@@ -22,6 +24,8 @@ Ship::Ship(Type type, Orientation orientation, std::vector<int> coordsEdge1){
             coordsEdge2_[0] = coordsEdge1_[0]+2;
             coordsEdge2_[1] = coordsEdge1_[1];
         }
+
+        hits_ = std::vector<bool>(3, false);
     }else{
         if(orientation_ == Orientation::HORIZONTAL){
             coordsEdge2_[0] = coordsEdge1_[0];
@@ -30,7 +34,20 @@ Ship::Ship(Type type, Orientation orientation, std::vector<int> coordsEdge1){
             coordsEdge2_[0] = coordsEdge1_[0]+1;
             coordsEdge2_[1] = coordsEdge1_[1];
         }
+
+        hits_ = std::vector<bool>(2, false);
     }
+}
+
+bool Ship::isSinked(){
+    
+    for(bool hit: hits_){
+        if(!hit){
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void Ship::printType(){

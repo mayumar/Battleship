@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include "../board/Board.hpp"
+#include <vector>
 
 class Game{
     private:
@@ -11,6 +12,8 @@ class Game{
         inline Game(){board1 = Board(); board2 = Board();};
 
         void createGame();
+
+        bool shot(int player, std::vector<int> coords);
 
 };
 

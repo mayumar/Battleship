@@ -6,7 +6,7 @@
 
 Board::Board(){
     table_ = std::vector<std::vector<char>>(10, std::vector<char>(10, 'A'));
-    ships_ = 0;
+    ships_ = std::vector<Ship>();
 }
 
 void Board::showBoard(){
@@ -202,7 +202,7 @@ bool Board::addShip(Ship &newShip){
             table_[col][newShip.getCoordsEdge1()[0]] = 'B';
     }
 
-    ships_++;
+    ships_.push_back(newShip);
 
     return true;
 }
