@@ -48,7 +48,7 @@ void manager(int signum){
     //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
 }
 
-void setServer(){
+void main(){
     int sd, newSd;
     struct sockaddr_in socnkName, from;
     char buffer[MSG_SIZE];

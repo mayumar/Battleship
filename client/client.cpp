@@ -12,7 +12,7 @@
 
 #include "client.hpp"
 
-void setClient(){
+void main(){
     int clientSocket;
     struct sockaddr_in sockName;
     char buffer[250];
