@@ -5,12 +5,13 @@
 
 int main(){
     Board b;
+    srand(time(nullptr));
 
     std::cout << "Inicial board:" << std::endl;
     b.showBoard();
     std::cout << std::endl;
 
-    Ship barquito(Type::LONG, Orientation::VERTICAL, {2, 2});
+    /*Ship barquito(Type::LONG, Orientation::VERTICAL, {2, 2});
 
     if(b.addShip(barquito)){
         std::cout << "Added ship 1" << std::endl;
@@ -32,7 +33,9 @@ int main(){
         std::cout << "Added ship 3" << std::endl;
     } else {
         std::cout << "Could not add ship 3" << std::endl;
-    }
+    }*/
+
+    b.setStartGame();
 
 
     std::cout << "Final board:" << std::endl;
