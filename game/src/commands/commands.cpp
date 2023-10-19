@@ -6,7 +6,7 @@
 #include "../auth/auth.hpp"
 #include "../server/server.hpp"
 
-void managedCommand(char *buffer, int client){
+void managedCommand(char *buffer, int &sizeBuffer, int &client){
     if(strstr(buffer, "USUARIO")){
         std::string user;
         user = strtok(buffer, " ");
@@ -16,14 +16,14 @@ void managedCommand(char *buffer, int client){
 
         user = cleanString(user);
 
-        bzero(buffer, sizeof(buffer));
+        bzero(buffer, sizeBuffer);
 
         if(loginUser(user))
             strcpy(buffer, "+Ok. Usuario correcto.\n");
         else
             strcpy(buffer, "-Err. Usuario incorrecto.\n");
         
-        send(client, buffer, sizeof(buffer), 0);
+        send(client, buffer, sizeBuffer, 0);
         return;
     }
 
@@ -36,14 +36,14 @@ void managedCommand(char *buffer, int client){
 
         password = cleanString(password);
 
-        bzero(buffer, sizeof(buffer));
+        bzero(buffer, sizeBuffer);
 
         if(loginPass(password))
             strcpy(buffer, "+Ok. Usuario valido.\n");
         else
             strcpy(buffer, "-Err. Error en la validacion.\n");
         
-        send(client, buffer, sizeof(buffer), 0);
+        send(client, buffer, sizeBuffer, 0);
         return;
     }
 }

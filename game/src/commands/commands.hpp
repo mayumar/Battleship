@@ -3,6 +3,6 @@
 
 #include <iostream>
 
-void managedCommand(char *buffer, int client);
+void managedCommand(char *buffer, int &sizeBuffer, int &client);
 
 #endif

@@ -119,11 +119,11 @@ void setServer(){
                             send(newSd, buffer, sizeof(buffer), 0);
                             
                             //NECESARIO????
-                            // for(j = 0; j < (numClients-1); j++){
-                            //     bzero(buffer, sizeof(buffer));
-                            //     sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
-                            //     send(clientsArray[j], buffer, sizeof(buffer), 0);
-                            // }
+                            for(j = 0; j < (numClients-1); j++){
+                                bzero(buffer, sizeof(buffer));
+                                sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
+                                send(clientsArray[j], buffer, sizeof(buffer), 0);
+                            }
 
                         } else {
                             bzero(buffer, sizeof(buffer));
@@ -156,9 +156,11 @@ void setServer(){
                     received = recv(i, buffer, sizeof(buffer), 0);
 
                     if(received > 0){
-                        if(strcmp(buffer, "SALIR\n") == 0)
-                            exitClient(i, &readfs, numClients, clientsArray);
-                        else managedCommand(buffer, clientsArray[j]);
+                        if(strcmp(buffer, "SALIR\n") != 0){
+                            int sizeBuffer = sizeof(buffer);
+                            managedCommand(buffer, sizeBuffer, clientsArray[j]);
+                        } else exitClient(i, &readfs, numClients, clientsArray);
+                        
                     } else if(received == 0){
                         std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;
                         exitClient(i, &readfs, numClients, clientsArray);

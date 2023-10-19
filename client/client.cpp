@@ -74,7 +74,7 @@ int main(){
                 send(clientSocket, buffer, sizeof(buffer), 0);
             }
         }
-    }while(end);
+    }while(!end);
 
     close(clientSocket);
     return 0;
