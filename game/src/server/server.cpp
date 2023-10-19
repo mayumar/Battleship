@@ -116,11 +116,10 @@ void setServer(){
                             clientsArray[numClients] = newSd;
                             numClients++;
                             FD_SET(newSd, &readfs);
-
-                            strcpy(buffer, "Bienvenido al chat\n");
-
+                            strcpy(buffer, "+OK. Usuario conectado\n");
                             send(newSd, buffer, sizeof(buffer), 0);
-
+                            
+                            //NECESARIO????
                             for(j = 0; j < (numClients-1); j++){
                                 bzero(buffer, sizeof(buffer));
                                 sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
