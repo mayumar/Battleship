@@ -6,12 +6,17 @@
 
 class Game{
     private:
-        Board board1;
-        Board board2;
+        Board boardp1_;
+        Board boardp2_;
+        Board p1game_;
+        Board p2game_;
+        
     public:
-        inline Game(){board1 = Board(); board2 = Board();};
-        inline Board getBoard1(){return board1;}
-        inline Board getBoard2(){return board2;}
+        inline Game() {};
+        inline Board getBoardp1(){return boardp1_;}
+        inline Board getBoardp2(){return boardp2_;}
+        inline Board getP1Game(){return p1game_;}
+        inline Board getP2Game(){return p2game_;}
 
         void createGame();
 

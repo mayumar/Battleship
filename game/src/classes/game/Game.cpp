@@ -4,17 +4,17 @@
 
 void Game::createGame(){
 
-    std::cout << "Creating P1 board: " << std::endl;
+    std::cout << "Creating P1 board..." << std::endl;
 
-    board1.setStartGame();
+    boardp1_.setStartGame();
 
     //board1.showBoard();
 
     std::cout << std::endl;
 
-    std::cout << "Creating P2 board: " << std::endl;
+    std::cout << "Creating P2 board..." << std::endl;
     
-    board2.setStartGame();
+    boardp2_.setStartGame();
 
     //board2.showBoard();
 
@@ -23,40 +23,42 @@ void Game::createGame(){
 
 bool Game::shot(int player, std::vector<int> shot){
     if(player == 1){
-        if(board2.getTable()[shot[1]][shot[0]] == 'B'){            
-            board2.setShot(shot);
-            board2.showBoard();
+        if(boardp2_.getTable()[shot[1]][shot[0]] == 'B'){            
+            boardp2_.setShot(shot);
+            p1game_.setShipShot(shot);
+            p1game_.showBoard();
             std::cout << "BOOOOOM" << std::endl;
 
-            if(board2.isSinked(board2.findShip(shot))){
+            if(boardp2_.isSinked(boardp2_.findShip(shot))){
                 std::cout << "SE HUNDIO" << std::endl;
-                board2.sinkShip();
+                boardp2_.sinkShip();
             }
 
             return true;
         }else{
-            board2.setShot(shot);
-            board2.showBoard();
+            p1game_.setShot(shot);
+            p1game_.showBoard();
             std::cout << "AGUA" << std::endl;
             return false;
         }
 
     }else if(player == 2){
 
-        if(board1.getTable()[shot[1]][shot[0]] == 'B'){
-            board1.setShot(shot);
-            board1.showBoard();
+        if(boardp1_.getTable()[shot[1]][shot[0]] == 'B'){            
+            boardp1_.setShot(shot);
+            p2game_.setShipShot(shot);
+            p2game_.showBoard();
             std::cout << "BOOOOOM" << std::endl;
 
-            if(board1.isSinked(board1.findShip(shot))){
+            if(boardp1_.isSinked(boardp1_.findShip(shot))){
                 std::cout << "SE HUNDIO" << std::endl;
-                board1.sinkShip();
+                boardp1_.sinkShip();
             }
- 
+
             return true;
         }else{
-            board1.setShot(shot);
-            board1.showBoard();
+            p2game_.setShot(shot);
+            p2game_.showBoard();
             std::cout << "AGUA" << std::endl;
             return false;
         }

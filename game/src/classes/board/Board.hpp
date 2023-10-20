@@ -23,6 +23,7 @@ class Board {
         void showBoard();
         void setStartGame();
         void setShot(std::vector<int> shot);
+        void setShipShot(std::vector<int> shot);
         Ship findShip(std::vector<int> coords);
         bool isSinked(Ship ship);
         

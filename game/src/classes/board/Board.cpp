@@ -40,7 +40,7 @@ void Board::setStartGame(){
     bool flag = false;
     int o;
 
-    std::cout << "Creating ships..." << std::endl << std::endl;
+    //std::cout << "Creating ships..." << std::endl << std::endl;
 
     do{
         o = rand()%2;
@@ -228,6 +228,16 @@ void Board::setShot(std::vector<int> shot){
         for(int j = 0; j < table_[i].size(); j++){
             if(i == shot[0] && j == shot[1]){
                 table_[j][i] = 'X';
+            }
+        }
+    }
+}
+
+void Board::setShipShot(std::vector<int> shot){
+    for(int i = 0; i < table_.size(); i++){
+        for(int j = 0; j < table_[i].size(); j++){
+            if(i == shot[0] && j == shot[1]){
+                table_[j][i] = '·';
             }
         }
     }
