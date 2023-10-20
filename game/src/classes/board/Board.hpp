@@ -16,7 +16,7 @@ class Board {
     public:
         Board();
         inline std::vector<Ship> getShips(){return ships_;}
-        inline std::vector<std::vector<char>> getTable(){return table_;};
+        inline std::vector<std::vector<char>> getTable(){return table_;}
         void showBoard();
         void setStartGame();
         

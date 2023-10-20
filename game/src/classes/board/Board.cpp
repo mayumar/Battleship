@@ -5,17 +5,32 @@
 #include "../../aux/aux.hpp"
 
 Board::Board(){
-    table_ = std::vector<std::vector<char>>(10, std::vector<char>(10, 'A'));
+    table_ = std::vector<std::vector<char>>(10, std::vector<char>(10, '-'));
     ships_ = std::vector<Ship>();
 }
 
 void Board::showBoard(){
+
+    std::cout << "   │ A B C D E F G H I J │" << std::endl;
+    std::cout << "───┼─────────────────────┼─" << std::endl;
+
     for(int i = 0; i < table_.size(); i++){
+
+        if(i != 9){
+            std::cout << " " << i+1 << " │ ";
+        }else{
+            std::cout << i+1 << " │ ";
+        }
+
         for(int j = 0; j < table_[i].size(); j++){
             std::cout << table_[j][i] << " ";
         }
-        std::cout << std::endl;
+
+        std::cout << "│" << std::endl;
     }
+
+    std::cout << "───┼─────────────────────┼─" << std::endl;
+
 }
 
 //TODO: MEJORAR ESTO TAMBIEN
