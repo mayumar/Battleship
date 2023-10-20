@@ -21,17 +21,15 @@ class Ship{
         Orientation orientation_;
         std::vector<int> coordsEdge1_;
         std::vector<int> coordsEdge2_;
-        std::vector<bool> hits_;
 
     public:
         Ship(Type type, Orientation orientation, std::vector<int> coordsEdge1);
+        inline Ship(){}
 
         inline Type getType(){return type_;}
         inline Orientation getOrientation(){return orientation_;}
         inline std::vector<int> getCoordsEdge1(){return coordsEdge1_;}
         inline std::vector<int> getCoordsEdge2(){return coordsEdge2_;}
-        inline std::vector<bool> getHits(){return hits_;}
-        bool isSinked();
 
         void printType();
         void printOrientation();

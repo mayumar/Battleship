@@ -12,16 +12,23 @@ int main(){
 
     game.createGame();
 
-    std::vector<int> shot = {2,3};
+    std::vector<int> shot(2);
+    int player = 0;
 
-    std::cout << "Introduzca coordenadas: " << std::endl;
-    std::cin >> shot[0];
-    std::cin >> shot[1];
+    while(game.getBoard1().getshipsAlive() > 0 && game.getBoard2().getshipsAlive() > 0){
+        std::cout << "Jugador " << 1+(player%2) << " introduzca coordenadas: " << std::endl;
+        std::cin >> shot[0];
+        std::cin >> shot[1];
 
-    if(game.shot(1, shot)){
-        std::cout << "BOOOOOM" << std::endl;
-    }else{
-        std::cout << "AGUA" << std::endl;
+        game.shot(1+(player%2), shot);
+
+        if(game.getBoard1().getshipsAlive() == 0){
+            std::cout << "Gano el jugador 1" << std::endl;
+        }else if(game.getBoard2().getshipsAlive() == 0){
+            std::cout << "Gano el jugador 2" << std::endl;
+        }
+
+        player++;
     }
 
     return 0;

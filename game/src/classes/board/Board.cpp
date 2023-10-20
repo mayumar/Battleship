@@ -7,6 +7,7 @@
 Board::Board(){
     table_ = std::vector<std::vector<char>>(10, std::vector<char>(10, '-'));
     ships_ = std::vector<Ship>();
+    ships_alive_ = 0;
 }
 
 void Board::showBoard(){
@@ -33,14 +34,13 @@ void Board::showBoard(){
 
 }
 
-//TODO: MEJORAR ESTO TAMBIEN
 void Board::setStartGame(){
     std::vector<int> initCords(2);
     Orientation orientation;
     bool flag = false;
     int o;
 
-    std::cout << "Creating ships..." << std::endl << std::endl;;
+    std::cout << "Creating ships..." << std::endl << std::endl;
 
     do{
         o = rand()%2;
@@ -218,6 +218,54 @@ bool Board::addShip(Ship &newShip){
     }
 
     ships_.push_back(newShip);
+    ships_alive_++;
 
     return true;
+}
+
+void Board::setShot(std::vector<int> shot){
+    for(int i = 0; i < table_.size(); i++){
+        for(int j = 0; j < table_[i].size(); j++){
+            if(i == shot[0] && j == shot[1]){
+                table_[j][i] = 'X';
+            }
+        }
+    }
+}
+
+Ship Board::findShip(std::vector<int> coords){
+
+    for(int i = 0; i < ships_.size(); i++){
+        for(int x = ships_[i].getCoordsEdge1()[0]; x <= ships_[i].getCoordsEdge2()[0]; x++){
+            for(int y = ships_[i].getCoordsEdge1()[1]; y <= ships_[i].getCoordsEdge2()[1]; y++){
+                if(coords[0] == x && coords[1] == y){
+                    return ships_[i];
+                }
+            }
+        }
+    }
+
+    return Ship();
+}
+
+bool Board::isSinked(Ship ship){
+    int cont = 0;
+
+    for(int x = ship.getCoordsEdge1()[0]; x <= ship.getCoordsEdge2()[0]; x++){
+        for(int y = ship.getCoordsEdge1()[1]; y <= ship.getCoordsEdge2()[1]; y++){
+            if(table_[y][x] == 'X'){
+                cont++;
+            }
+        }
+    }
+
+    if(ship.getType() == Type::LONG && cont == 4){
+        return true;
+    }else if(ship.getType() == Type::MEDIUM && cont == 3){
+        return true;
+    }else if(ship.getType() == Type::SHORT && cont == 2){
+        return true;
+    }
+
+    return false;
 }
