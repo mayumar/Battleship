@@ -158,7 +158,8 @@ void setServer(){
                     if(received > 0){
                         if(strcmp(buffer, "SALIR\n") != 0){
                             int sizeBuffer = sizeof(buffer);
-                            managedCommand(buffer, sizeBuffer, clientsArray[j]);
+                            Player p;
+                            managedCommand(buffer, sizeBuffer, clientsArray[j], p);
                         } else exitClient(i, &readfs, numClients, clientsArray);
                         
                     } else if(received == 0){

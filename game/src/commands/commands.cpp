@@ -5,25 +5,25 @@
 #include "../aux/aux.hpp"
 #include "../auth/auth.hpp"
 #include "../server/server.hpp"
+#include "../classes/player/Player.hpp"
 
-void managedCommand(char *buffer, int &sizeBuffer, int &client){
+void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
     if(strstr(buffer, "USUARIO")){
-        std::string user;
-        user = strtok(buffer, " ");
+        std::string username;
+        username = strtok(buffer, " ");
 
-        if(!user.empty())
-            user = strtok(nullptr, " ");
+        if(!username.empty())
+            username = strtok(nullptr, " ");
 
-        user = cleanString(user);
+        username = cleanString(username);
 
         bzero(buffer, sizeBuffer);
 
-        if(loginUser(user))
-            strcpy(buffer, "+Ok. Usuario correcto.\n");
-        else
-            strcpy(buffer, "-Err. Usuario incorrecto.\n");
+        loginUsername(username) ? strcpy(buffer, "+Ok. Usuario correcto.\n") : strcpy(buffer, "-Err. Usuario incorrecto.\n");
+
+        p.setUsername(username);
         
-        send(client, buffer, sizeBuffer, 0);
+        send(client, buffer, sizeBuffer, 0);//Y SI SEPARO ESTO?????
         return;
     }
 
@@ -38,12 +38,47 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client){
 
         bzero(buffer, sizeBuffer);
 
-        if(loginPass(password))
-            strcpy(buffer, "+Ok. Usuario valido.\n");
-        else
-            strcpy(buffer, "-Err. Error en la validacion.\n");
+        loginPass(password) ? strcpy(buffer, "+Ok. Usuario valido.\n") : strcpy(buffer, "-Err. Error en la validacion.\n");
         
-        send(client, buffer, sizeBuffer, 0);
+        p.setPassword(password);
+
+        send(client, buffer, sizeBuffer, 0);//Y SI SEPARO ESTO?????
+        return;
+    }
+
+    if(strstr(buffer, "REGISTRO")){
+        std::string command, username, password;
+        command = strtok(buffer, " ");
+
+        if(!(command = strtok(nullptr, " ")).empty()){
+            if(command == "-u"){
+                command = strtok(nullptr, " ");
+                if(!command.empty())
+                    username = command;
+            }
+
+            command = strtok(nullptr, " ");
+            
+            if(command == "-p"){
+                command = strtok(nullptr, " ");
+                if(!command.empty())
+                    password = command;
+            }
+        }
+
+        username = cleanString(username);
+        password = cleanString(password);
+
+        bzero(buffer, sizeBuffer);
+
+        p = signup(username, password);
+
+        if(p.getUsername() == "" || p.getPassword() == "")
+            strcpy(buffer, "-Err. El jugador ya ha sido registardo.\n");
+        else
+            strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
+        
+        send(client, buffer, sizeBuffer, 0); //Y SI SEPARO ESTO?????
         return;
     }
 }

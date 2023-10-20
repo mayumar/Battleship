@@ -2,8 +2,10 @@
 #define AUTH_HPP
 
 #include <string>
+#include "../classes/player/Player.hpp"
 
-bool loginUser(std::string user);
+bool loginUsername(std::string user);
 bool loginPass(std::string password);
+Player signup(std::string username, std::string password);
 
 #endif
