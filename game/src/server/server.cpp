@@ -109,64 +109,67 @@ void setServer(){
 
         if(exitSelect > 0){
             for(i = 0; i < FD_SETSIZE; i++){
-                if(i == sd){
-                    if((newSd = accept(sd, (struct sockaddr *)&from, &fromLen)) != -1){
-                        if(numClients < MAX_CLIENTS){
-                            clientsArray[numClients] = newSd;
-                            numClients++;
-                            FD_SET(newSd, &readfs);
-                            strcpy(buffer, "+OK. Usuario conectado\n");
-                            send(newSd, buffer, sizeof(buffer), 0);
-                            
-                            //NECESARIO????
-                            for(j = 0; j < (numClients-1); j++){
+                if(FD_ISSET(i, &auxfds)){
+                    if(i == sd){
+                        if((newSd = accept(sd, (struct sockaddr *)&from, &fromLen)) != -1){
+                            if(numClients < MAX_CLIENTS){
+                                clientsArray[numClients] = newSd;
+                                numClients++;
+                                FD_SET(newSd, &readfs);
+                                strcpy(buffer, "+OK. Usuario conectado\n");
+                                send(newSd, buffer, sizeof(buffer), 0);
+                                
+                                //NECESARIO????
+                                for(j = 0; j < (numClients-1); j++){
+                                    bzero(buffer, sizeof(buffer));
+                                    sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
+                                    send(clientsArray[j], buffer, sizeof(buffer), 0);
+                                }
+
+                            } else {
                                 bzero(buffer, sizeof(buffer));
-                                sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
-                                send(clientsArray[j], buffer, sizeof(buffer), 0);
+                                strcpy(buffer, "Demasiados clientes conectados\n");
+                                send(newSd, buffer, sizeof(buffer), 0);
+                                close(newSd);
                             }
-
-                        } else {
-                            bzero(buffer, sizeof(buffer));
-                            strcpy(buffer, "Demasiados clientes conectados\n");
-                            send(newSd, buffer, sizeof(buffer), 0);
-                            close(newSd);
-                        }
-                    } else std::cerr << "Error al aceptar peticiones" << std::endl;
-                    
-                } else if (i == 0) {
-                    bzero(buffer, sizeof(buffer));
-                    fgets(buffer, sizeof(buffer), stdin);
-
-                    if(strcmp(buffer, "SALIR\n") == 0){
-                        for(j = 0; j < numClients; j++){
-                            bzero(buffer, sizeof(buffer));
-                            strcpy(buffer, "Saliendo del chat\n");
-                            send(clientsArray[j], buffer, sizeof(buffer), 0);
-                            close(clientsArray[j]);
-                            FD_CLR(clientsArray[j], &readfs);
-                        }
+                        } else std::cerr << "Error al aceptar peticiones" << std::endl;
                         
-                        close(sd);
-                        exit(-1);
-                    }
-                    //Mensajes que se quieran mandar a los clientes (implementar)
-                } else {
-                    //Server recibe datos
-                    bzero(buffer, sizeof(buffer));
-                    received = recv(i, buffer, sizeof(buffer), 0);
+                    } else if (i == 0) {
+                        bzero(buffer, sizeof(buffer));
+                        fgets(buffer, sizeof(buffer), stdin);
 
-                    if(received > 0){
-                        if(strcmp(buffer, "SALIR\n") != 0){
-                            int sizeBuffer = sizeof(buffer);
-                            Player p;
-                            managedCommand(buffer, sizeBuffer, clientsArray[j], p);
-                        } else exitClient(i, &readfs, numClients, clientsArray);
-                        
-                    } else if(received == 0){
-                        std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;
-                        exitClient(i, &readfs, numClients, clientsArray);
-                    }
-                }      
+                        if(strcmp(buffer, "SALIR\n") == 0){
+                            for(j = 0; j < numClients; j++){
+                                bzero(buffer, sizeof(buffer));
+                                strcpy(buffer, "Saliendo del chat\n");
+                                send(clientsArray[j], buffer, sizeof(buffer), 0);
+                                close(clientsArray[j]);
+                                FD_CLR(clientsArray[j], &readfs);
+                            }
+                            
+                            close(sd);
+                            exit(-1);
+                        }
+                        //Mensajes que se quieran mandar a los clientes (implementar)
+                    } else {
+                        //Server recibe datos
+                        bzero(buffer, sizeof(buffer));
+                        received = recv(i, buffer, sizeof(buffer), 0);
+
+                        if(received > 0){
+                            if(strcmp(buffer, "SALIR\n") != 0){
+                                int sizeBuffer = sizeof(buffer);
+                                Player p;
+                                managedCommand(buffer, sizeBuffer, clientsArray[j], p);
+                                send(clientsArray[j], buffer, sizeof(buffer), 0);
+                            } else exitClient(i, &readfs, numClients, clientsArray);
+                            
+                        } else if(received == 0){
+                            std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;
+                            exitClient(i, &readfs, numClients, clientsArray);
+                        }
+                    }      
+                }
             }
         }
     }

@@ -23,7 +23,6 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
 
         p.setUsername(username);
         
-        send(client, buffer, sizeBuffer, 0);//Y SI SEPARO ESTO?????
         return;
     }
 
@@ -42,7 +41,6 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
         
         p.setPassword(password);
 
-        send(client, buffer, sizeBuffer, 0);//Y SI SEPARO ESTO?????
         return;
     }
 
@@ -78,7 +76,6 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
         else
             strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
         
-        send(client, buffer, sizeBuffer, 0); //Y SI SEPARO ESTO?????
         return;
     }
 }
