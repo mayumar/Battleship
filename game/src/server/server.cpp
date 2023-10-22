@@ -13,7 +13,7 @@
 #include "../commands/commands.hpp"
 
 #define MSG_SIZE 250
-#define MAX_CLIENTS 50
+#define MAX_CLIENTS 30
 
 void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[]){
     char buffer[250];
@@ -89,6 +89,8 @@ void setServer(){
 
     fromLen = sizeof(from);
 
+    Player p;
+
     if(listen(sd, 1) == -1){
         std::cerr << "Error al escuchar" << std::endl;
         exit(1);
@@ -159,7 +161,6 @@ void setServer(){
                         if(received > 0){
                             if(strcmp(buffer, "SALIR\n") != 0){
                                 int sizeBuffer = sizeof(buffer);
-                                Player p;
                                 managedCommand(buffer, sizeBuffer, clientsArray[j], p);
                                 send(clientsArray[j], buffer, sizeof(buffer), 0);
                             } else exitClient(i, &readfs, numClients, clientsArray);

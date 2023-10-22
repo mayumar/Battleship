@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <sstream>
 
 #include "commands.hpp"
 #include "../aux/aux.hpp"
@@ -8,64 +9,46 @@
 #include "../classes/player/Player.hpp"
 
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
-    if(strstr(buffer, "USUARIO")){
+    std::string command;
+    std::string stringBuffer = buffer;
+    cleanString(stringBuffer);
+    std::istringstream stream(stringBuffer);
+
+    stream >> command;
+
+    if(command == "USUARIO"){
         std::string username;
-        username = strtok(buffer, " ");
-
-        if(!username.empty())
-            username = strtok(nullptr, " ");
-
-        username = cleanString(username);
+        stream >> username;
 
         bzero(buffer, sizeBuffer);
 
         loginUsername(username) ? strcpy(buffer, "+Ok. Usuario correcto.\n") : strcpy(buffer, "-Err. Usuario incorrecto.\n");
 
         p.setUsername(username);
-        
         return;
     }
 
-    if(strstr(buffer, "PASSWORD")){
+    if(command == "PASSWORD"){
+        if(p.getUsername() == ""){
+            strcpy(buffer, "-Err. No se ha introducido el nombre de usuario.\n");
+            return;
+        }
+
         std::string password;
-        password = strtok(buffer, " ");
-
-        if(!password.empty())
-            password = strtok(nullptr, " ");
-
-        password = cleanString(password);
+        stream >> password;
 
         bzero(buffer, sizeBuffer);
 
         loginPass(password) ? strcpy(buffer, "+Ok. Usuario valido.\n") : strcpy(buffer, "-Err. Error en la validacion.\n");
         
         p.setPassword(password);
-
+        p.setIsLogin(true);
         return;
     }
 
-    if(strstr(buffer, "REGISTRO")){
-        std::string command, username, password;
-        command = strtok(buffer, " ");
-
-        if(!(command = strtok(nullptr, " ")).empty()){
-            if(command == "-u"){
-                command = strtok(nullptr, " ");
-                if(!command.empty())
-                    username = command;
-            }
-
-            command = strtok(nullptr, " ");
-            
-            if(command == "-p"){
-                command = strtok(nullptr, " ");
-                if(!command.empty())
-                    password = command;
-            }
-        }
-
-        username = cleanString(username);
-        password = cleanString(password);
+    if(command == "REGISTRO"){
+        std::string option, username, password;
+        stream >> option >> username >> option >> password;
 
         bzero(buffer, sizeBuffer);
 
@@ -75,7 +58,17 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
             strcpy(buffer, "-Err. El jugador ya ha sido registardo.\n");
         else
             strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
+
+        p.setIsLogin(true);
+        return;
+    }
+
+    if(command == "HELP"){
+        bzero(buffer, sizeBuffer);
         
+        const char* helpMessage = "USUARIO <usuario>\nPASSWORD <password>\nREGISTRO -u <usuario> -p <password>\nINICIAR-PARTIDA\nDISPARO <letra> <numero>\nSALIR\n";
+
+        strcpy(buffer, helpMessage);
         return;
     }
 }

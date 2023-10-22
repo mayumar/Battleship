@@ -5,6 +5,6 @@
 #include <vector>
 
 void generateRandomCoords(std::vector<int> &coords);
-std::string cleanString(std::string &cad);
+void cleanString(std::string &cad);
 
 #endif
