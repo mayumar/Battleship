@@ -64,7 +64,7 @@ bool loginPass(std::string password){
     return false;
 }
 
-Player signup(std::string username, std::string password){
+Player signup(std::string username, std::string password, int socket){
     if(loginUsername(username) && loginPass(password))
         return Player();
 
@@ -79,6 +79,6 @@ Player signup(std::string username, std::string password){
     
     file.close();
 
-    Player p = Player(username, password);
+    Player p = Player(username, password, socket);
     return p;
 }

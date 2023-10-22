@@ -8,7 +8,7 @@
 #include "../server/server.hpp"
 #include "../classes/player/Player.hpp"
 
-void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
+void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, std::queue<Player> &players, Game &game){
     std::string command;
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
@@ -43,6 +43,7 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
         
         p.setPassword(password);
         p.setIsLogin(true);
+        p.setSocket(client);
         return;
     }
 
@@ -52,7 +53,7 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
 
         bzero(buffer, sizeBuffer);
 
-        p = signup(username, password);
+        p = signup(username, password, client);
 
         if(p.getUsername() == "" || p.getPassword() == "")
             strcpy(buffer, "-Err. El jugador ya ha sido registardo.\n");
@@ -60,9 +61,10 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p){
             strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
 
         p.setIsLogin(true);
+        p.setSocket(client);
         return;
     }
-
+    
     if(command == "HELP"){
         bzero(buffer, sizeBuffer);
         

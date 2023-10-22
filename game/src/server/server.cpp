@@ -8,9 +8,11 @@
 #include <signal.h>
 #include <unistd.h>
 #include <time.h>
+#include <queue>
 
 #include "server.hpp"
 #include "../commands/commands.hpp"
+#include "../classes/game/Game.hpp"
 
 #define MSG_SIZE 250
 #define MAX_CLIENTS 30
@@ -61,6 +63,10 @@ void setServer(){
     int clientsArray[MAX_CLIENTS];
     int numClients = 0;
 
+    Game game;
+    std::queue<Player> players;
+    bool waiting = false;
+
     int i, j, k;
 
     int received;
@@ -90,6 +96,7 @@ void setServer(){
     fromLen = sizeof(from);
 
     Player p;
+    Player p2;
 
     if(listen(sd, 1) == -1){
         std::cerr << "Error al escuchar" << std::endl;
@@ -160,9 +167,25 @@ void setServer(){
 
                         if(received > 0){
                             if(strcmp(buffer, "SALIR\n") != 0){
-                                int sizeBuffer = sizeof(buffer);
-                                managedCommand(buffer, sizeBuffer, clientsArray[j], p);
-                                send(clientsArray[j], buffer, sizeof(buffer), 0);
+                                if(strcmp(buffer, "INICIAR-PARTIDA\n") != 0){
+                                    int sizeBuffer = sizeof(buffer);
+                                    managedCommand(buffer, sizeBuffer, clientsArray[j], p, players, game);
+                                    send(clientsArray[j], buffer, sizeof(buffer), 0);
+                                }else if(p.isLogin()){
+                                    if(players.empty()){
+                                        int sizeBuffer = sizeof(buffer);
+                                        strcpy(buffer, "+Ok. Esperando jugadores\n");
+                                        players.push(p);
+                                        send(p.getSocket(), buffer, sizeof(buffer), 0);
+                                    }else{
+                                        int sizeBuffer = sizeof(buffer);
+                                        p2 = players.front();
+                                        players.pop();
+                                        strcpy(buffer, "+Ok. La partida va a comenzar\n");
+                                        send(p.getSocket(), buffer, sizeof(buffer), 0);
+                                        send(p2.getSocket(), buffer, sizeof(buffer), 0);
+                                    }
+                                }
                             } else exitClient(i, &readfs, numClients, clientsArray);
                             
                         } else if(received == 0){

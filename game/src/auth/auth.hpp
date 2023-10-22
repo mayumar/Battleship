@@ -6,6 +6,6 @@
 
 bool loginUsername(std::string user);
 bool loginPass(std::string password);
-Player signup(std::string username, std::string password);
+Player signup(std::string username, std::string password, int socket);
 
 #endif

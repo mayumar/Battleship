@@ -237,7 +237,7 @@ void Board::setShipShot(std::vector<int> shot){
     for(int i = 0; i < table_.size(); i++){
         for(int j = 0; j < table_[i].size(); j++){
             if(i == shot[0] && j == shot[1]){
-                table_[j][i] = '·';
+                table_[j][i] = 'T';
             }
         }
     }
