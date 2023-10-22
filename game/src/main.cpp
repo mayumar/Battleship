@@ -7,11 +7,11 @@
 #include <vector>
 
 int main(){
-    // srand(time(nullptr));
-    // Game game;
-    // game.createGame();
+    srand(time(nullptr));
+    Game game;
+    game.createGame();
 
-    setServer();
+    //setServer();
 
     std::vector<int> shot(2);
     int player = 0;

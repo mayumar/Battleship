@@ -21,7 +21,6 @@ class Game{
         void createGame();
 
         bool shot(int player, std::vector<int> shot);
-
 };
 
 #endif
