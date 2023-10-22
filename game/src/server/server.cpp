@@ -166,28 +166,10 @@ void setServer(){
                         received = recv(i, buffer, sizeof(buffer), 0);
 
                         if(received > 0){
-                            if(strcmp(buffer, "SALIR\n") != 0){
-                                if(strcmp(buffer, "INICIAR-PARTIDA\n") != 0){
-                                    int sizeBuffer = sizeof(buffer);
-                                    managedCommand(buffer, sizeBuffer, clientsArray[j], p, players, game);
-                                    send(clientsArray[j], buffer, sizeof(buffer), 0);
-                                }else if(p.isLogin()){
-                                    if(players.empty()){
-                                        int sizeBuffer = sizeof(buffer);
-                                        strcpy(buffer, "+Ok. Esperando jugadores\n");
-                                        players.push(p);
-                                        send(p.getSocket(), buffer, sizeof(buffer), 0);
-                                    }else{
-                                        int sizeBuffer = sizeof(buffer);
-                                        p2 = players.front();
-                                        players.pop();
-                                        strcpy(buffer, "+Ok. La partida va a comenzar\n");
-                                        send(p.getSocket(), buffer, sizeof(buffer), 0);
-                                        send(p2.getSocket(), buffer, sizeof(buffer), 0);
-                                    }
-                                }
+                            if(strcmp(buffer, "SALIR") != 0){
+                                int sizeBuffer = sizeof(buffer);
+                                managedCommand(buffer, sizeBuffer, clientsArray[j], p, p2, players, game);
                             } else exitClient(i, &readfs, numClients, clientsArray);
-                            
                         } else if(received == 0){
                             std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;
                             exitClient(i, &readfs, numClients, clientsArray);
