@@ -7,7 +7,8 @@
 class Board {
     private:
         std::vector<std::vector<char>> table_;
-        int ships_;
+        std::vector<Ship> ships_;
+        int ships_alive_;
 
     protected:
         bool checkShipPosition(Ship &ship);
@@ -15,10 +16,16 @@ class Board {
 
     public:
         Board();
-        inline void setShips(int ships){ships_ = ships;}
-        inline int getShips(){return ships_;}
+        inline std::vector<Ship> getShips(){return ships_;}
+        inline std::vector<std::vector<char>> getTable(){return table_;}
+        inline int getshipsAlive() {return ships_alive_;}
+        inline void sinkShip() {ships_alive_--;}
         void showBoard();
         void setStartGame();
+        void setShot(std::vector<int> shot);
+        void setShipShot(std::vector<int> shot);
+        Ship findShip(std::vector<int> coords);
+        bool isSinked(Ship ship);
         
 };
 

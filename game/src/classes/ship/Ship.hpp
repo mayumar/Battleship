@@ -24,6 +24,7 @@ class Ship{
 
     public:
         Ship(Type type, Orientation orientation, std::vector<int> coordsEdge1);
+        inline Ship(){}
 
         inline Type getType(){return type_;}
         inline Orientation getOrientation(){return orientation_;}
