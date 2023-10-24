@@ -38,12 +38,10 @@ void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Playe
                         : strcpy(buffer, "-Err. Error en la validacion.\n");
     
     
-    for(auto it = players.begin(); it != players.end(); it++){
-        if(it->getUsername() == p.getUsername()){
-            it->setPassword(password);
-            it->setIsLogin(true);
-        }
-    }
+    auto it = findInList(players, p);
+    it->setPassword(password);
+    it->setIsLogin(true);
+
     send(client, buffer, sizeBuffer, 0);
     return;
 }

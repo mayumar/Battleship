@@ -192,6 +192,12 @@ void setServer(){
                                         strcpy(buffer, "+Ok. Empieza la partida\n");
                                         send(p.getSocket(), buffer, sizeBuffer, 0);
                                         send(p2.getSocket(), buffer, sizeBuffer, 0);
+
+                                        auto it = findInList(players, p);
+                                        it->setIsPlaying(true);
+                                        it = findInList(players, p2);
+                                        it->setIsPlaying(true);
+
                                         p.setIsPlaying(true);
                                         p2.setIsPlaying(true);
                                         game.setP1(p2);
