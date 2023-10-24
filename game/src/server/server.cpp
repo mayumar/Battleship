@@ -69,7 +69,7 @@ void setServer(){
     Player p, p2;
     Game game;
     std::queue<Player> waitingPlayers;
-    std::list<Player> loginPlayers;
+    std::list<Player> players;
 
     int i, j, k;
 
@@ -171,14 +171,14 @@ void setServer(){
                             if(strcmp(buffer, "SALIR") != 0){
                                 int sizeBuffer = sizeof(buffer);
                                 
+                                p = searchPlayer(players, i);
 
                                 if(!p.isLogin() && !p.isPlaying()){
 
-                                    managedCommand(buffer, sizeBuffer, i, p, waitingPlayers, loginPlayers);
+                                    managedCommand(buffer, sizeBuffer, i, p, players);
 
                                 }else if(strcmp(buffer, "INICIAR-PARTIDA\n") == 0 && !p.isPlaying()) {
                                     
-                                    p = searchPlayer(loginPlayers, i);
                                     if(waitingPlayers.empty()){
 
                                         strcpy(buffer, "+Ok. Esperando jugadores\n");
@@ -199,10 +199,8 @@ void setServer(){
                                         game.createGame(sizeBuffer);
 
                                     }
-
-                                    p = Player();
                                     
-                                } else if(searchPlayer(loginPlayers, i).isPlaying()) {
+                                } else if(p.isPlaying()) {
 
                                     if(game.getTurn() == 1){
                                         if(game.getP2().getSocket() == i){
