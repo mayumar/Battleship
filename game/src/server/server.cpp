@@ -166,7 +166,40 @@ void setServer(){
                         if(received > 0){
                             if(strcmp(buffer, "SALIR") != 0){
                                 int sizeBuffer = sizeof(buffer);
-                                managedCommand(buffer, sizeBuffer, clientsArray[j], p, p2, players);
+                               
+                                if(strcmp(buffer, "INICIAR-PARTIDA") == 0 && !p.isPlaying()) {
+                                    
+                                    if(p.isLogin() && players.empty()){
+
+                                        strcpy(buffer, "+Ok. Esperando jugadores\n");
+                                        players.push(p);
+                                        send(p.getSocket(), buffer, sizeBuffer, 0);
+
+                                    } else if(p.isLogin()){
+
+                                        p2 = players.front();
+                                        players.pop();
+                                        strcpy(buffer, "+Ok. La partida va a comenzar\n");
+                                        send(p.getSocket(), buffer, sizeBuffer, 0);
+                                        send(p2.getSocket(), buffer, sizeBuffer, 0);
+                                        p.setIsPlaying(true);
+                                        p2.setIsPlaying(true);
+                                        
+                                    } else {
+
+                                        strcpy(buffer, "-Err. El usuario no esta logueado.\n"); //TODO
+                                        send(clientsArray[j], buffer, sizeBuffer, 0);
+                                        
+                                    }
+                                    
+                                } else if(!p.isLogin()) {
+                                    
+                                    managedCommand(buffer, sizeBuffer, clientsArray[j], p, p2, players);
+                                    
+                                } else if(p.isPlaying()) {
+                                    //COSAS
+                                }
+                                
                             } else exitClient(i, &readfs, numClients, clientsArray);
                         } else if(received == 0){
                             std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;

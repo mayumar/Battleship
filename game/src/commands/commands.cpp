@@ -82,24 +82,6 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Playe
         return;
     }
 
-    if(command == "INICIAR-PARTIDA"){
-        if(p.isLogin() && players.empty()){
-            strcpy(buffer, "+Ok. Esperando jugadores\n");
-            players.push(p);
-            send(p.getSocket(), buffer, sizeBuffer, 0);
-        } else if(p.isLogin()){
-            p2 = players.front();
-            players.pop();
-            strcpy(buffer, "+Ok. La partida va a comenzar\n");
-            send(p.getSocket(), buffer, sizeBuffer, 0);
-            send(p2.getSocket(), buffer, sizeBuffer, 0);
-        } else {
-            strcpy(buffer, "-Err. El usuario no esta logueado.\n");
-            send(client, buffer, sizeBuffer, 0);
-        }
-
-        return;
-    }
 
     if(command == "DISPARO"){
         std::string word, numSTR;
@@ -126,4 +108,9 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Playe
         send(client, buffer, sizeBuffer, 0);
         return;
     }
+}
+
+void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Player &p, Player &p2){
+    
+
 }
