@@ -14,27 +14,6 @@ std::string Board::showBoard(){
 
     std::string out = "";
 
-    // out = "   │ A B C D E F G H I J │\n";
-    // out += "───┼─────────────────────┼─\n";
-
-    // for(int i = 0; i < table_.size(); i++){
-
-    //     if(i != 9){
-    //         out += (" " + std::to_string(i+1) + " │ ");
-    //     }else{
-    //         out += (std::to_string(i+1) + " │ ");
-    //     }
-
-    //     for(int j = 0; j < table_[i].size(); j++){
-    //         std::string point = table_[j][i];
-    //         out += (point + " ");
-    //     }
-
-    //     out += "│\n";
-    // }
-
-    // out += "───┼─────────────────────┼─\n";
-
     for(int i = 0; i < table_.size(); i++){
         for(int j = 0; j < table_[i].size(); j++)
             out += table_[j][i];
@@ -244,16 +223,6 @@ void Board::setShot(std::vector<int> shot){
     }
 }
 
-void Board::setShipShot(std::vector<int> shot){
-    for(int i = 0; i < table_.size(); i++){
-        for(int j = 0; j < table_[i].size(); j++){
-            if(i == shot[0] && j == shot[1]){
-                table_[j][i] = "T";
-            }
-        }
-    }
-}
-
 Ship Board::findShip(std::vector<int> coords){
 
     for(int i = 0; i < ships_.size(); i++){
@@ -289,4 +258,26 @@ bool Board::isSinked(Ship ship){
     }
 
     return false;
+}
+
+void Board::showServerBoard(){
+    std::cout << "   │ A B C D E F G H I J │ " << std::endl;
+    std::cout << "───┼─────────────────────┼─" << std::endl;
+
+    for(int i = 0; i < table_.size(); i++){
+
+        if(i != 9){
+            std::cout << " " << i+1 << " │ ";
+        }else{
+            std::cout << i+1 << " │ ";
+        }
+
+        for(int j = 0; j < table_[i].size(); j++){
+            std::cout << table_[j][i] << " ";
+        }
+
+        std::cout << "│" << std::endl;
+    }
+
+    std::cout << "───┼─────────────────────┼─" << std::endl << std::endl;
 }

@@ -146,8 +146,13 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
     stream >> command;
 
     if(command == "DISPARO"){
-        std::string word, numSTR;
-        stream >> word >> numSTR;
+        std::string coords, word, numSTR;
+        stream >> coords;
+
+        std::istringstream ss(coords);
+        std::getline(ss, word, ',');
+        std::getline(ss, numSTR);
+
         int num = std::stoi(numSTR);
 
         std::vector<int> realCoords = {num-1, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
@@ -160,7 +165,7 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
         else if(game.getP2().getSocket() == client)
             send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
 
-        game.shot(realCoords, (word + "," + std::to_string(num)), sizeBuffer);
+        game.shot(realCoords, coords, sizeBuffer);
         return;
     }    
 }

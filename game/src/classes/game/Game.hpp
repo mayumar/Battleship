@@ -11,16 +11,12 @@ class Game{
         Player p2_;
         Board boardp1_;
         Board boardp2_;
-        Board p1game_;
-        Board p2game_;
         int turn_;
         
     public:
         inline Game() {};
         inline Board getBoardp1(){return boardp1_;}
         inline Board getBoardp2(){return boardp2_;}
-        inline Board getP1Game(){return p1game_;}
-        inline Board getP2Game(){return p2game_;}
         inline Player getP1(){return p1_;}
         inline Player getP2(){return p2_;}
         inline int getTurn(){return turn_;}
