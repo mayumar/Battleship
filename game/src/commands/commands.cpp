@@ -21,7 +21,7 @@ void userCommand(int &client, char *buffer, int &sizeBuffer, std::istringstream 
     return;
 }
 
-void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> loginPlayers, 
+void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &loginPlayers, 
                      std::istringstream &stream, Player &p) {
     if(p.getUsername() == ""){
         strcpy(buffer, "-Err. No se ha introducido el nombre de usuario.\n");
