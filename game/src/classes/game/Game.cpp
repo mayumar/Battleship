@@ -7,7 +7,7 @@
 
 void Game::createGame(int &sizeBuffer){
 
-    std::string stringBufferP1 = ("+Ok. Empezamos partida.");
+    std::string stringBufferP1 = "+Ok. Empezamos partida.";
     std::string stringBufferP2 = stringBufferP1;
 
     boardp1_.setStartGame();

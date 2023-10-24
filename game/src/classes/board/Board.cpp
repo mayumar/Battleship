@@ -37,7 +37,8 @@ std::string Board::showBoard(){
 
     for(int i = 0; i < table_.size(); i++){
         for(int j = 0; j < table_[i].size(); j++)
-            out += table_[i][j];
+            out += table_[j][i];
+        out += ";";
     }
 
     return out;

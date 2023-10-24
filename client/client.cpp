@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -10,7 +11,53 @@
 #include <time.h>
 #include <arpa/inet.h>
 
-//#include "client.hpp"
+#include "client.hpp"
+
+void parseBoard(std::string &table, std::vector<std::vector<std::string>> &board) {
+    std::vector<std::string> rows;
+    size_t init = 0;
+    size_t end = table.find(";");
+    std::string row;
+
+    while(end != std::string::npos) {
+        row = table.substr(init, end - init);
+        rows.push_back(row);
+        init = end + 1;
+        end = table.find(";", init);
+        board.push_back(rows);
+    }
+
+    if(init < table.length()) {
+        row = table.substr(init);
+        rows.push_back(row);
+        board.push_back(rows);
+    }
+}
+
+std::string showBoard(std::vector<std::vector<std::string>> &board) {
+    std::string out = "";
+
+    out = "   │ A B C D E F G H I J │\n";
+    out += "───┼─────────────────────┼─\n";
+
+    for(int i = 0; i < board.size(); i++){
+
+        if(i != 9){
+            out += (" " + std::to_string(i+1) + " │ ");
+        }else{
+            out += (std::to_string(i+1) + " │ ");
+        }
+
+        for(int j = 0; j < board[i].size(); j++){
+            std::string point = board[j][i];
+            out += (point + " ");
+        }
+
+        out += "│\n";
+    }
+
+    out += "───┼─────────────────────┼─\n";
+}
 
 int main(){
     int sd;
@@ -58,6 +105,16 @@ int main(){
 
             std::string stringBuffer = buffer;
 
+            std::string subcadena = "+Ok. Empezamos partida.";
+            size_t pos;
+
+            if((pos = stringBuffer.find(subcadena)) != std::string::npos) {
+                std::string formatTable = stringBuffer.substr(pos + subcadena.length());
+                std::vector<std::vector<std::string>> board;
+                parseBoard(formatTable, board);
+                stringBuffer = showBoard(board);
+            }
+            
             std::cout << std::endl << stringBuffer << std::endl;
 
             if(strcmp(buffer, "Demasiados clientes conectados\n") == 0 || strcmp(buffer,"Desconexión servidor\n") == 0)
