@@ -5,7 +5,7 @@
 #include <string>
 #include <sys/socket.h>
 
-void Game::createGame(char * buffer, int &sizeBuffer){
+void Game::createGame(int &sizeBuffer){
 
     std::string stringBufferP1 = ("Creando tablero de " + p1_.getUsername() + "...\n\n");
     std::string stringBufferP2 = stringBufferP1;
@@ -29,47 +29,61 @@ void Game::createGame(char * buffer, int &sizeBuffer){
     send(p2_.getSocket(), stringBufferP2.data(), sizeBuffer, 0);
 }
 
-bool Game::shot(int player, std::vector<int> shot){
-    if(player == 1){
-        if(boardp2_.getTable()[shot[1]][shot[0]] == "B"){            
+bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
+    std::string buffer;
+
+    if(turn_ == 1){
+        if(boardp2_.getTable()[shot[1]][shot[0]] == "B"){
             boardp2_.setShot(shot);
             p1game_.setShipShot(shot);
-            p1game_.showBoard();
-            std::cout << "BOOOOOM" << std::endl;
+            //p1game_.showBoard();
+            //std::cout << "BOOOOOM" << std::endl;
+            buffer = "+Ok. TOCADO: " + coords;
 
             if(boardp2_.isSinked(boardp2_.findShip(shot))){
-                std::cout << "SE HUNDIO" << std::endl;
+                //std::cout << "SE HUNDIO" << std::endl;
+                buffer = "+Ok. HUNDIDO: " + coords;
                 boardp2_.sinkShip();
             }
 
             return true;
         }else{
             p1game_.setShot(shot);
-            p1game_.showBoard();
-            std::cout << "AGUA" << std::endl;
+            //p1game_.showBoard();
+            //std::cout << "AGUA" << std::endl;
+            buffer = "+Ok. AGUA: " + coords;
             return false;
         }
 
-    }else if(player == 2){
+        send(p1_.getSocket(), buffer.data(), sizeBuffer, 0);
+        turn_ = 2;
 
-        if(boardp1_.getTable()[shot[1]][shot[0]] == "B"){            
+    }else if(turn_ == 2){
+
+        if(boardp1_.getTable()[shot[1]][shot[0]] == "B"){
             boardp1_.setShot(shot);
             p2game_.setShipShot(shot);
-            p2game_.showBoard();
-            std::cout << "BOOOOOM" << std::endl;
+            //p2game_.showBoard();
+            //std::cout << "BOOOOOM" << std::endl;
+            buffer = "+Ok. TOCADO: " + coords;
 
             if(boardp1_.isSinked(boardp1_.findShip(shot))){
-                std::cout << "SE HUNDIO" << std::endl;
+                //std::cout << "SE HUNDIO" << std::endl;
+                buffer = "+Ok. HUNDIDO: " + coords;
                 boardp1_.sinkShip();
             }
 
             return true;
         }else{
             p2game_.setShot(shot);
-            p2game_.showBoard();
-            std::cout << "AGUA" << std::endl;
+            //p2game_.showBoard();
+            //std::cout << "AGUA" << std::endl;
+            buffer = "+Ok. AGUA: " + coords;
             return false;
         }
+
+        send(p2_.getSocket(), buffer.data(), sizeBuffer, 0);
+        turn_ = 1;
 
     }
 
