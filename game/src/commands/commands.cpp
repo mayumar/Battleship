@@ -33,6 +33,7 @@ void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Playe
                      std::istringstream &stream, Player &p) {
     if(p.getUsername() == ""){
         strcpy(buffer, "-Err. No se ha introducido el nombre de usuario.\n");
+        send(client, buffer, sizeBuffer, 0);
         return;
     }
 
@@ -59,12 +60,21 @@ void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player>
     std::string option, username, password;
     stream >> option >> username >> option >> password;
 
+    if(username == "" || password == ""){
+        strcpy(buffer, "-Err. Error al registrar usuario.\n");
+        send(client, buffer, sizeBuffer, 0);
+        return;
+    }
+
     p = signup(username, password, client);
 
-    if(p.getUsername() == "" || p.getPassword() == "")
+    if(p.getUsername() == "" || p.getPassword() == ""){
         strcpy(buffer, "-Err. El jugador ya ha sido registardo.\n");
-    else
-        strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
+        send(client, buffer, sizeBuffer, 0);
+        return;
+    }
+    
+    strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
 
     p.setIsLogin(true);
     p.setSocket(client);
