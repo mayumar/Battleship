@@ -14,26 +14,31 @@ std::string Board::showBoard(){
 
     std::string out = "";
 
-    out = "   │ A B C D E F G H I J │\n";
-    out += "───┼─────────────────────┼─\n";
+    // out = "   │ A B C D E F G H I J │\n";
+    // out += "───┼─────────────────────┼─\n";
+
+    // for(int i = 0; i < table_.size(); i++){
+
+    //     if(i != 9){
+    //         out += (" " + std::to_string(i+1) + " │ ");
+    //     }else{
+    //         out += (std::to_string(i+1) + " │ ");
+    //     }
+
+    //     for(int j = 0; j < table_[i].size(); j++){
+    //         std::string point = table_[j][i];
+    //         out += (point + " ");
+    //     }
+
+    //     out += "│\n";
+    // }
+
+    // out += "───┼─────────────────────┼─\n";
 
     for(int i = 0; i < table_.size(); i++){
-
-        if(i != 9){
-            out += (" " + std::to_string(i+1) + " │ ");
-        }else{
-            out += (std::to_string(i+1) + " │ ");
-        }
-
-        for(int j = 0; j < table_[i].size(); j++){
-            std::string point = table_[j][i];
-            out += (point + " ");
-        }
-
-        out += "│\n";
+        for(int j = 0; j < table_[i].size(); j++)
+            out += table_[i][j];
     }
-
-    out += "───┼─────────────────────┼─\n";
 
     return out;
 

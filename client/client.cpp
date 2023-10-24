@@ -15,7 +15,7 @@
 int main(){
     int sd;
     struct sockaddr_in sockName;
-    char buffer[1000];
+    char buffer[250];
     socklen_t sockNameLen;
     fd_set readfds, auxfds;
     int exitSelect;

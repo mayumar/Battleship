@@ -7,20 +7,20 @@
 
 void Game::createGame(int &sizeBuffer){
 
-    std::string stringBufferP1 = ("Creando tablero de " + p1_.getUsername() + "...\n\n");
+    std::string stringBufferP1 = ("+Ok. Empezamos partida.");
     std::string stringBufferP2 = stringBufferP1;
 
     boardp1_.setStartGame();
 
     stringBufferP1 += boardp1_.showBoard();
-    stringBufferP2 += ("Tablero de " + p1_.getUsername() + " creado\n");
+    // stringBufferP2 += ("Tablero de " + p1_.getUsername() + " creado\n");
 
-    stringBufferP1 += ("Creando tablero de " + p2_.getUsername() + "...\n\n");
-    stringBufferP2 += ("Creando tablero de " + p2_.getUsername() + "...\n\n");
+    // stringBufferP1 += ("Creando tablero de " + p2_.getUsername() + "...\n\n");
+    // stringBufferP2 += ("Creando tablero de " + p2_.getUsername() + "...\n\n");
     
     boardp2_.setStartGame();
 
-    stringBufferP1 += ("Tablero de " + p2_.getUsername() + " creado\n");
+    // stringBufferP1 += ("Tablero de " + p2_.getUsername() + " creado\n");
     stringBufferP2 += boardp2_.showBoard();
 
     turn_ = 1;
