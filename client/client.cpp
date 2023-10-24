@@ -10,27 +10,22 @@
 #include <unistd.h>
 #include <time.h>
 #include <arpa/inet.h>
+#include <sstream>
 
 #include "client.hpp"
 
 void parseBoard(std::string &table, std::vector<std::vector<std::string>> &board) {
-    std::vector<std::string> rows;
-    size_t init = 0;
-    size_t end = table.find(";");
-    std::string row;
+    std::vector<std::string> row;
+    std::string elem;
 
-    while(end != std::string::npos) {
-        row = table.substr(init, end - init);
-        rows.push_back(row);
-        init = end + 1;
-        end = table.find(";", init);
-        board.push_back(rows);
-    }
-
-    if(init < table.length()) {
-        row = table.substr(init);
-        rows.push_back(row);
-        board.push_back(rows);
+    for (char c : table) {
+        elem = std::string(1, c);
+        if (c == ';') {
+            board.push_back(row);
+            row.clear();
+        } else {
+            row.push_back(elem);
+        }
     }
 }
 
@@ -57,6 +52,8 @@ std::string showBoard(std::vector<std::vector<std::string>> &board) {
     }
 
     out += "───┼─────────────────────┼─\n";
+
+    return out;
 }
 
 int main(){
@@ -135,6 +132,6 @@ int main(){
         }
     }while(!end);
 
-    close(sd);
+    // close(sd);
     return 0;
 }
