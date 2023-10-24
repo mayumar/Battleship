@@ -46,17 +46,22 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
                 boardp2_.sinkShip();
             }
 
+            send(p1_.getSocket(), buffer.data(), sizeBuffer, 0);
+            turn_ = 2;
+
             return true;
         }else{
             p1game_.setShot(shot);
             //p1game_.showBoard();
             //std::cout << "AGUA" << std::endl;
             buffer = "+Ok. AGUA: " + coords;
+
+            send(p1_.getSocket(), buffer.data(), sizeBuffer, 0);
+            turn_ = 2;
             return false;
         }
 
-        send(p1_.getSocket(), buffer.data(), sizeBuffer, 0);
-        turn_ = 2;
+        
 
     }else if(turn_ == 2){
 
@@ -72,18 +77,21 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
                 buffer = "+Ok. HUNDIDO: " + coords;
                 boardp1_.sinkShip();
             }
-
+            
+            send(p2_.getSocket(), buffer.data(), sizeBuffer, 0);
+            turn_ = 1;
             return true;
         }else{
             p2game_.setShot(shot);
             //p2game_.showBoard();
             //std::cout << "AGUA" << std::endl;
             buffer = "+Ok. AGUA: " + coords;
+            send(p2_.getSocket(), buffer.data(), sizeBuffer, 0);
+            turn_ = 1;
             return false;
         }
 
-        send(p2_.getSocket(), buffer.data(), sizeBuffer, 0);
-        turn_ = 1;
+        
 
     }
 
