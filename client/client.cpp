@@ -13,17 +13,17 @@
 //#include "client.hpp"
 
 int main(){
-    int clientSocket;
+    int sd;
     struct sockaddr_in sockName;
-    char buffer[250];
+    char buffer[1000];
     socklen_t sockNameLen;
     fd_set readfds, auxfds;
     int exitSelect;
     bool end = false;
 
-    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    sd = socket(AF_INET, SOCK_STREAM, 0);
 
-    if(clientSocket == -1){
+    if(sd == -1){
         std::cerr << "No se puede abrir el socket del cliente" << std::endl;
         exit(-1);
     }
@@ -37,7 +37,7 @@ int main(){
 	-------------------------------------------------------------------*/
 	sockNameLen = sizeof(sockName);
 	
-	if(connect(clientSocket, (struct sockaddr *)&sockName, sockNameLen) == -1){
+	if(connect(sd, (struct sockaddr *)&sockName, sockNameLen) == -1){
 		perror ("Error de conexión");
 		exit(1);
 	}
@@ -46,17 +46,19 @@ int main(){
     FD_ZERO(&readfds);
 
     FD_SET(0, &readfds);
-    FD_SET(clientSocket, &readfds);
+    FD_SET(sd, &readfds);
 
     do{
         auxfds = readfds;
-        exitSelect = select(clientSocket+1, &auxfds, nullptr, nullptr, nullptr);
+        exitSelect = select(sd+1, &auxfds, nullptr, nullptr, nullptr);
 
-        if(FD_ISSET(clientSocket, &auxfds)){
+        if(FD_ISSET(sd, &auxfds)){
             bzero(buffer, sizeof(buffer));
-            recv(clientSocket, buffer, sizeof(buffer), 0);
+            recv(sd, buffer, sizeof(buffer), 0); //RECIBO DE DATOS
 
-            std::cout << std::endl << buffer << std::endl;
+            std::string stringBuffer = buffer;
+
+            std::cout << std::endl << stringBuffer << std::endl;
 
             if(strcmp(buffer, "Demasiados clientes conectados\n") == 0 || strcmp(buffer,"Desconexión servidor\n") == 0)
                 end = true;
@@ -71,11 +73,11 @@ int main(){
                 if(strcmp(buffer, "SALIR\n") == 0)
                     end = true;
                 
-                send(clientSocket, buffer, sizeof(buffer), 0);
+                send(sd, buffer, sizeof(buffer), 0);
             }
         }
     }while(!end);
 
-    close(clientSocket);
+    close(sd);
     return 0;
 }

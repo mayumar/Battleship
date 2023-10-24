@@ -31,7 +31,7 @@ void Game::createGame(char * buffer, int &sizeBuffer){
 
 bool Game::shot(int player, std::vector<int> shot){
     if(player == 1){
-        if(boardp2_.getTable()[shot[1]][shot[0]] == 'B'){            
+        if(boardp2_.getTable()[shot[1]][shot[0]] == "B"){            
             boardp2_.setShot(shot);
             p1game_.setShipShot(shot);
             p1game_.showBoard();
@@ -52,7 +52,7 @@ bool Game::shot(int player, std::vector<int> shot){
 
     }else if(player == 2){
 
-        if(boardp1_.getTable()[shot[1]][shot[0]] == 'B'){            
+        if(boardp1_.getTable()[shot[1]][shot[0]] == "B"){            
             boardp1_.setShot(shot);
             p2game_.setShipShot(shot);
             p2game_.showBoard();

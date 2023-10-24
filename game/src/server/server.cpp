@@ -16,11 +16,11 @@
 #include "../commands/commands.hpp"
 #include "../classes/game/Game.hpp"
 
-#define MSG_SIZE 250
+#define MSG_SIZE 600
 #define MAX_CLIENTS 30
 
 void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[]){
-    char buffer[250];
+    char buffer[MSG_SIZE];
     int j;
 
     close(socket);

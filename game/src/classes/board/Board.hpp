@@ -7,7 +7,7 @@
 
 class Board {
     private:
-        std::vector<std::vector<char>> table_;
+        std::vector<std::vector<std::string>> table_;
         std::vector<Ship> ships_;
         int ships_alive_;
 
@@ -18,7 +18,7 @@ class Board {
     public:
         Board();
         inline std::vector<Ship> getShips(){return ships_;}
-        inline std::vector<std::vector<char>> getTable(){return table_;}
+        inline std::vector<std::vector<std::string>> getTable(){return table_;}
         inline int getshipsAlive() {return ships_alive_;}
         inline void sinkShip() {ships_alive_--;}
         std::string showBoard();
