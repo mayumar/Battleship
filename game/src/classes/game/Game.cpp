@@ -25,8 +25,8 @@ void Game::createGame(char * buffer, int &sizeBuffer){
 
     turn_ = 1;
 
-    send(p1_.getSocket(), stringBufferP1.data(), stringBufferP1.length(), 0);
-    send(p2_.getSocket(), stringBufferP2.data(), stringBufferP2.length(), 0);
+    send(p1_.getSocket(), stringBufferP1.data(), sizeBuffer, 0);
+    send(p2_.getSocket(), stringBufferP2.data(), sizeBuffer, 0);
 }
 
 bool Game::shot(int player, std::vector<int> shot){

@@ -26,7 +26,8 @@ std::string Board::showBoard(){
         }
 
         for(int j = 0; j < table_[i].size(); j++){
-            out += (table_[j][i] + " ");
+            char point = table_[j][i];
+            out += (point + " ");
         }
 
         out += "│\n";
