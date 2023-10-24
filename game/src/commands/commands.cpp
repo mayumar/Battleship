@@ -14,8 +14,13 @@ void userCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &
     std::string username;
     stream >> username;
 
-    loginUsername(username) ? strcpy(buffer, "+Ok. Usuario correcto.\n") 
-                            : strcpy(buffer, "-Err. Usuario incorrecto.\n");
+    if(!loginUsername(username)){
+        strcpy(buffer, "-Err. Usuario incorrecto.\n");
+        send(client, buffer, sizeBuffer, 0);
+        return;
+    }
+
+    strcpy(buffer, "+Ok. Usuario correcto.\n");
 
     p.setUsername(username);
     p.setSocket(client);
@@ -28,16 +33,20 @@ void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Playe
                      std::istringstream &stream, Player &p) {
     if(p.getUsername() == ""){
         strcpy(buffer, "-Err. No se ha introducido el nombre de usuario.\n");
+        send(client, buffer, sizeBuffer, 0);
         return;
     }
 
     std::string password;
     stream >> password;
 
-    loginPass(password) ? strcpy(buffer, "+Ok. Usuario valido.\n") 
-                        : strcpy(buffer, "-Err. Error en la validacion.\n");
+    if(!loginPass(password)){
+        strcpy(buffer, "-Err. Error en la validacion.\n");
+        send(client, buffer, sizeBuffer, 0);
+        return;
+    }
     
-    
+    strcpy(buffer, "+Ok. Usuario valido.\n");
     auto it = findInList(players, p);
     it->setPassword(password);
     it->setIsLogin(true);
@@ -51,12 +60,21 @@ void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player>
     std::string option, username, password;
     stream >> option >> username >> option >> password;
 
+    if(username == "" || password == ""){
+        strcpy(buffer, "-Err. Error al registrar usuario.\n");
+        send(client, buffer, sizeBuffer, 0);
+        return;
+    }
+
     p = signup(username, password, client);
 
-    if(p.getUsername() == "" || p.getPassword() == "")
+    if(p.getUsername() == "" || p.getPassword() == ""){
         strcpy(buffer, "-Err. El jugador ya ha sido registardo.\n");
-    else
-        strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
+        send(client, buffer, sizeBuffer, 0);
+        return;
+    }
+    
+    strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
 
     p.setIsLogin(true);
     p.setSocket(client);
