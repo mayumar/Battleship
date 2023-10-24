@@ -9,6 +9,71 @@
 #include "../server/server.hpp"
 #include "../classes/player/Player.hpp"
 
+void userCommand(int &client, char *buffer, int &sizeBuffer, std::istringstream &stream, Player &p) {
+    std::string username;
+    stream >> username;
+
+    loginUsername(username) ? strcpy(buffer, "+Ok. Usuario correcto.\n") 
+                            : strcpy(buffer, "-Err. Usuario incorrecto.\n");
+
+    p.setUsername(username);
+    send(client, buffer, sizeBuffer, 0);
+    return;
+}
+
+void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> loginPlayers, 
+                     std::istringstream &stream, Player &p) {
+    if(p.getUsername() == ""){
+        strcpy(buffer, "-Err. No se ha introducido el nombre de usuario.\n");
+        return;
+    }
+
+    std::string password;
+    stream >> password;
+
+    loginPass(password) ? strcpy(buffer, "+Ok. Usuario valido.\n") 
+                        : strcpy(buffer, "-Err. Error en la validacion.\n");
+    
+    p.setPassword(password);
+    p.setIsLogin(true);
+    p.setSocket(client);
+    addLoginPlayer(loginPlayers, p);
+    send(client, buffer, sizeBuffer, 0);
+    return;
+}
+
+void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> loginPlayers, 
+                   std::istringstream &stream, Player &p) {
+    std::string option, username, password;
+    stream >> option >> username >> option >> password;
+
+    p = signup(username, password, client);
+
+    if(p.getUsername() == "" || p.getPassword() == "")
+        strcpy(buffer, "-Err. El jugador ya ha sido registardo.\n");
+    else
+        strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
+
+    p.setIsLogin(true);
+    p.setSocket(client);
+    addLoginPlayer(loginPlayers, p);
+    send(client, buffer, sizeBuffer, 0);
+    return;
+}
+
+void helpCommand(char *buffer, int &sizeBuffer, int &client) {
+    std::string helpMessage = "USUARIO <usuario>\n"
+                                  "PASSWORD <password>\n"
+                                  "REGISTRO -u <usuario> -p <password>\n"
+                                  "INICIAR-PARTIDA\n"
+                                  "DISPARO <letra> <numero>\n"
+                                  "SALIR\n";
+
+    strcpy(buffer, helpMessage.data());
+    send(client, buffer, sizeBuffer, 0);
+    return;
+}
+
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
                     std::queue<Player> &players, std::list<Player> &loginPlayers){
     std::string stringBuffer = buffer;
@@ -33,86 +98,17 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     
     bzero(buffer, sizeBuffer);
 
-    if(command == "USUARIO"){
-        std::string username;
-        stream >> username;
-
-        loginUsername(username) ? strcpy(buffer, "+Ok. Usuario correcto.\n") 
-                                : strcpy(buffer, "-Err. Usuario incorrecto.\n");
-
-        p.setUsername(username);
+    if(command == "USUARIO")
+        userCommand(client, buffer, sizeBuffer, stream, p);
+    else if(command == "PASSWORD") 
+        passwordCommand(client, buffer, sizeBuffer, loginPlayers, stream, p);
+    else if(command == "REGISTRO") 
+        signupCommand(client, buffer, sizeBuffer, loginPlayers, stream, p);
+    else if(command == "HELP")
+        helpCommand(buffer, sizeBuffer, client);
+    else {
+        strcpy(buffer, "-Err. Comando incorrecto.\n");
         send(client, buffer, sizeBuffer, 0);
-        return;
-    }
-
-    if(command == "PASSWORD"){
-        if(p.getUsername() == ""){
-            strcpy(buffer, "-Err. No se ha introducido el nombre de usuario.\n");
-            return;
-        }
-
-        std::string password;
-        stream >> password;
-
-
-        loginPass(password) ? strcpy(buffer, "+Ok. Usuario valido.\n") 
-                            : strcpy(buffer, "-Err. Error en la validacion.\n");
-        
-        p.setPassword(password);
-        p.setIsLogin(true);
-        p.setSocket(client);
-        addLoginPlayer(loginPlayers, p);
-        send(client, buffer, sizeBuffer, 0);
-        return;
-    }
-
-    if(command == "REGISTRO"){
-        std::string option, username, password;
-        stream >> option >> username >> option >> password;
-
-        p = signup(username, password, client);
-
-        if(p.getUsername() == "" || p.getPassword() == "")
-            strcpy(buffer, "-Err. El jugador ya ha sido registardo.\n");
-        else
-            strcpy(buffer, "+Ok. Jugador registrado con exito.\n");
-
-        p.setIsLogin(true);
-        p.setSocket(client);
-        addLoginPlayer(loginPlayers, p);
-        send(client, buffer, sizeBuffer, 0);
-        return;
-    }
-
-    if(command == "INICIAR-PARTIDA"){
-        strcpy(buffer, "-Err. El usuario no esta logueado.\n"); //TODO
-        send(client, buffer, sizeBuffer, 0);
-    }
-
-    if(command == "DISPARO"){
-        std::string word, numSTR;
-        stream >> word >> numSTR;
-        int num = std::stoi(numSTR);
-
-        std::vector<int> realCoords = {num, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
-                                                              //Va al revés por culpa de C++
-
-        sprintf(buffer, "+Ok. Disparo en: %s, %d.\n", word.data(), num);
-        send(client, buffer, sizeBuffer, 0);
-        return;
-    }
-    
-    if(command == "HELP"){
-        std::string helpMessage = "USUARIO <usuario>\n"
-                                  "PASSWORD <password>\n"
-                                  "REGISTRO -u <usuario> -p <password>\n"
-                                  "INICIAR-PARTIDA\n"
-                                  "DISPARO <letra> <numero>\n"
-                                  "SALIR\n";
-
-        strcpy(buffer, helpMessage.data());
-        send(client, buffer, sizeBuffer, 0);
-        return;
     }
 }
 

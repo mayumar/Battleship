@@ -19,7 +19,7 @@
 #define MSG_SIZE 600
 #define MAX_CLIENTS 30
 
-void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[]){
+void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], Game &game){
     char buffer[MSG_SIZE];
     int j;
 
@@ -37,12 +37,12 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
     numClients--;
 
     bzero(buffer, sizeof(buffer));
-    sprintf(buffer, "Desconexion del cliente <%d>", socket);
+    strcpy(buffer, "+Ok. Tu oponente se ha desconectado.");
 
-    for(j = 0; j < numClients; j++){
-        if(clientsArray[j] != socket)
-            send(clientsArray[j], buffer, sizeof(buffer), 0);
-    }
+    if(game.getP1().getSocket() == socket)
+        send(game.getP2().getSocket(), buffer, sizeof(buffer), 0);
+    else if(game.getP2().getSocket() == socket)
+        send(game.getP1().getSocket(), buffer, sizeof(buffer), 0);
 }
 
 void manager(int signum){
@@ -208,10 +208,10 @@ void setServer(){
                                     
                                 }
                                 
-                            } else exitClient(i, &readfs, numClients, clientsArray);
+                            } else exitClient(i, &readfs, numClients, clientsArray, game);
                         } else if(received == 0){
                             std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;
-                            exitClient(i, &readfs, numClients, clientsArray);
+                            exitClient(i, &readfs, numClients, clientsArray, game);
                         }
                     }      
                 }
