@@ -11,6 +11,6 @@
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
                     std::queue<Player> &waitingPlayers, std::list<Player> &loginPlayers);
 
-void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Player &p, Player &p2);
+void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game);
 
 #endif

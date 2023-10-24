@@ -16,11 +16,11 @@
 #include "../commands/commands.hpp"
 #include "../classes/game/Game.hpp"
 
-#define MSG_SIZE 250
+#define MSG_SIZE 600
 #define MAX_CLIENTS 30
 
 void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[]){
-    char buffer[250];
+    char buffer[MSG_SIZE];
     int j;
 
     close(socket);
@@ -193,18 +193,42 @@ void setServer(){
                                         send(p2.getSocket(), buffer, sizeBuffer, 0);
                                         p.setIsPlaying(true);
                                         p2.setIsPlaying(true);
-                                        game.setP1(p);
-                                        game.setP2(p2);
-                                        game.createGame(buffer, sizeBuffer);
+                                        game.setP1(p2);
+                                        game.setP2(p);
+                                        game.createGame(sizeBuffer);
 
                                     }
 
                                     p = Player();
                                     
-                                } else if(p.isPlaying()) {
-                                    //Busco los jugadores de la partida
-                                    
-                                    //Player p1;
+                                } else if(searchPlayer(loginPlayers, i).isPlaying()) {
+
+                                    if(game.getTurn() == 1){
+                                        if(game.getP2().getSocket() == i){
+                                            strcpy(buffer, "-Err. Debe esperar su turno\n");
+                                            send(i, buffer, sizeBuffer, 0);
+                                        }else{
+                                            managedGameCommands(buffer, sizeBuffer, i, game);
+                                        }
+                                    }else if(game.getTurn() == 2){
+                                        if(game.getP1().getSocket() == i){
+                                            strcpy(buffer, "-Err. Debe esperar su turno\n");
+                                            send(i, buffer, sizeBuffer, 0);
+                                        }else{
+                                            managedGameCommands(buffer, sizeBuffer, i, game);
+                                        }
+                                    }
+
+                                    std::string gameOver;
+
+                                    if(game.getBoardp1().getshipsAlive() == 0){
+                                        gameOver = ("+Ok. " + game.getP2().getUsername() + " ha ganado\n");
+                                    }else if(game.getBoardp2().getshipsAlive() == 0){
+                                        gameOver = ("+Ok. " + game.getP1().getUsername() + " ha ganado\n");
+                                    }
+
+                                    send(game.getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
+                                    send(game.getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
                                     
                                 }
                                 

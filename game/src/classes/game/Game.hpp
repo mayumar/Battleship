@@ -28,9 +28,9 @@ class Game{
         inline void setP1(Player p1){p1_ = p1;}
         inline void setP2(Player p2){p2_ = p2;}
 
-        void createGame(char * buffer, int &sizeBuffer);
+        void createGame(int &sizeBuffer);
 
-        bool shot(int player, std::vector<int> shot);
+        bool shot(std::vector<int> shot, std::string coords, int &sizeBuffer);
 };
 
 #endif

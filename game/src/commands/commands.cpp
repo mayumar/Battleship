@@ -14,19 +14,6 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
-    std::map<std::string, int> coordsMap = {
-        {"A", 0},
-        {"B", 1},
-        {"C", 2},
-        {"D", 3},
-        {"E", 4},
-        {"F", 5},
-        {"G", 6},
-        {"H", 7},
-        {"I", 8},
-        {"J", 9},
-    };
-
     std::istringstream stream(stringBuffer);
     std::string command;
     stream >> command;
@@ -89,18 +76,7 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
         send(client, buffer, sizeBuffer, 0);
     }
 
-    if(command == "DISPARO"){
-        std::string word, numSTR;
-        stream >> word >> numSTR;
-        int num = std::stoi(numSTR);
-
-        std::vector<int> realCoords = {num, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
-                                                              //Va al revés por culpa de C++
-
-        sprintf(buffer, "+Ok. Disparo en: %s, %d.\n", word.data(), num);
-        send(client, buffer, sizeBuffer, 0);
-        return;
-    }
+    
     
     if(command == "HELP"){
         std::string helpMessage = "USUARIO <usuario>\n"
@@ -116,7 +92,43 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     }
 }
 
-void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Player &p, Player &p2){
-    
+void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game){
+    std::string stringBuffer = buffer;
+    cleanString(stringBuffer);
 
+    std::map<std::string, int> coordsMap = {
+        {"A", 0},
+        {"B", 1},
+        {"C", 2},
+        {"D", 3},
+        {"E", 4},
+        {"F", 5},
+        {"G", 6},
+        {"H", 7},
+        {"I", 8},
+        {"J", 9},
+    };
+
+    std::istringstream stream(stringBuffer);
+    std::string command;
+    stream >> command;
+
+    if(command == "DISPARO"){
+        std::string word, numSTR;
+        stream >> word >> numSTR;
+        int num = std::stoi(numSTR);
+
+        std::vector<int> realCoords = {num-1, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
+                                                                //Va al revés por culpa de C++
+
+        sprintf(buffer, "+Ok. Disparo en: %s, %d.\n", word.data(), num);
+
+        if(game.getP1().getSocket() == client)
+            send(game.getP2().getSocket(), buffer, sizeBuffer, 0);
+        else if(game.getP2().getSocket() == client)
+            send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
+
+        game.shot(realCoords, (word + "," + std::to_string(num)), sizeBuffer);
+        return;
+    }    
 }
