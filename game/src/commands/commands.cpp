@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include <sstream>
+#include <map>
 
 #include "commands.hpp"
 #include "../aux/aux.hpp"
@@ -8,8 +9,8 @@
 #include "../server/server.hpp"
 #include "../classes/player/Player.hpp"
 
-void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Player &p2, 
-                    std::queue<Player> &players){
+void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
+                    std::queue<Player> &players, std::list<Player> &loginPlayers){
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
@@ -60,6 +61,7 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Playe
         p.setPassword(password);
         p.setIsLogin(true);
         p.setSocket(client);
+        addLoginPlayer(loginPlayers, p);
         send(client, buffer, sizeBuffer, 0);
         return;
     }
@@ -67,7 +69,6 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Playe
     if(command == "REGISTRO"){
         std::string option, username, password;
         stream >> option >> username >> option >> password;
-
 
         p = signup(username, password, client);
 
@@ -78,10 +79,15 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Playe
 
         p.setIsLogin(true);
         p.setSocket(client);
+        addLoginPlayer(loginPlayers, p);
         send(client, buffer, sizeBuffer, 0);
         return;
     }
 
+    if(command == "INICIAR-PARTIDA"){
+        strcpy(buffer, "-Err. El usuario no esta logueado.\n"); //TODO
+        send(client, buffer, sizeBuffer, 0);
+    }
 
     if(command == "DISPARO"){
         std::string word, numSTR;

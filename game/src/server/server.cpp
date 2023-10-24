@@ -9,8 +9,10 @@
 #include <unistd.h>
 #include <time.h>
 #include <queue>
+#include <list>
 
 #include "server.hpp"
+#include "../aux/aux.hpp"
 #include "../commands/commands.hpp"
 #include "../classes/game/Game.hpp"
 
@@ -62,8 +64,11 @@ void setServer(){
     int exitSelect;
     int clientsArray[MAX_CLIENTS];
     int numClients = 0;
-
-    std::queue<Player> players;
+    
+    Player p, p2;
+    Game game;
+    std::queue<Player> waitingPlayers;
+    std::list<Player> loginPlayers;
 
     int i, j, k;
 
@@ -92,9 +97,7 @@ void setServer(){
     }
 
     fromLen = sizeof(from);
-
-    Player p;
-    Player p2;
+    
 
     if(listen(sd, 1) == -1){
         std::cerr << "Error al escuchar" << std::endl;
@@ -166,38 +169,43 @@ void setServer(){
                         if(received > 0){
                             if(strcmp(buffer, "SALIR") != 0){
                                 int sizeBuffer = sizeof(buffer);
-                               
-                                if(strcmp(buffer, "INICIAR-PARTIDA") == 0 && !p.isPlaying()) {
+                                
+
+                                if(!p.isLogin() && !p.isPlaying()){
+
+                                    managedCommand(buffer, sizeBuffer, i, p, waitingPlayers, loginPlayers);
+
+                                }else if(strcmp(buffer, "INICIAR-PARTIDA\n") == 0 && !p.isPlaying()) {
                                     
-                                    if(p.isLogin() && players.empty()){
+                                    p = searchPlayer(loginPlayers, i);
+                                    if(waitingPlayers.empty()){
 
                                         strcpy(buffer, "+Ok. Esperando jugadores\n");
-                                        players.push(p);
+                                        waitingPlayers.push(p);
                                         send(p.getSocket(), buffer, sizeBuffer, 0);
 
-                                    } else if(p.isLogin()){
+                                    } else {
 
-                                        p2 = players.front();
-                                        players.pop();
-                                        strcpy(buffer, "+Ok. La partida va a comenzar\n");
+                                        p2 = waitingPlayers.front();
+                                        waitingPlayers.pop();
+                                        strcpy(buffer, "+Ok. Empieza la partida\n");
                                         send(p.getSocket(), buffer, sizeBuffer, 0);
                                         send(p2.getSocket(), buffer, sizeBuffer, 0);
                                         p.setIsPlaying(true);
                                         p2.setIsPlaying(true);
-                                        
-                                    } else {
+                                        game.setP1(p);
+                                        game.setP2(p2);
+                                        game.createGame(buffer, sizeBuffer);
 
-                                        strcpy(buffer, "-Err. El usuario no esta logueado.\n"); //TODO
-                                        send(clientsArray[j], buffer, sizeBuffer, 0);
-                                        
                                     }
-                                    
-                                } else if(!p.isLogin()) {
-                                    
-                                    managedCommand(buffer, sizeBuffer, clientsArray[j], p, p2, players);
+
+                                    p = Player();
                                     
                                 } else if(p.isPlaying()) {
-                                    //COSAS
+                                    //Busco los jugadores de la partida
+                                    
+                                    //Player p1;
+                                    
                                 }
                                 
                             } else exitClient(i, &readfs, numClients, clientsArray);

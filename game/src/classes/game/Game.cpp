@@ -1,24 +1,32 @@
 #include "Game.hpp"
+#include "../../aux/aux.hpp"
 #include <iostream>
 #include <vector>
+#include <string>
+#include <sys/socket.h>
 
-void Game::createGame(){
+void Game::createGame(char * buffer, int &sizeBuffer){
 
-    std::cout << "Creating P1 board..." << std::endl;
+    std::string stringBufferP1 = ("Creando tablero de " + p1_.getUsername() + "...\n\n");
+    std::string stringBufferP2 = stringBufferP1;
 
     boardp1_.setStartGame();
 
-    //board1.showBoard();
+    stringBufferP1 += boardp1_.showBoard();
+    stringBufferP2 += ("Tablero de " + p1_.getUsername() + " creado\n");
 
-    std::cout << std::endl;
-
-    std::cout << "Creating P2 board..." << std::endl;
+    stringBufferP1 += ("Creando tablero de " + p2_.getUsername() + "...\n\n");
+    stringBufferP2 += ("Creando tablero de " + p2_.getUsername() + "...\n\n");
     
     boardp2_.setStartGame();
 
-    //board2.showBoard();
+    stringBufferP1 += ("Tablero de " + p2_.getUsername() + " creado\n");
+    stringBufferP2 += boardp2_.showBoard();
 
-    std::cout << std::endl;
+    turn_ = 1;
+
+    send(p1_.getSocket(), stringBufferP1.data(), sizeBuffer, 0);
+    send(p2_.getSocket(), stringBufferP2.data(), sizeBuffer, 0);
 }
 
 bool Game::shot(int player, std::vector<int> shot){

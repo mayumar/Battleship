@@ -10,27 +10,31 @@ Board::Board(){
     ships_alive_ = 0;
 }
 
-void Board::showBoard(){
+std::string Board::showBoard(){
 
-    std::cout << "   │ A B C D E F G H I J │" << std::endl;
-    std::cout << "───┼─────────────────────┼─" << std::endl;
+    std::string out = "";
+
+    out = "   │ A B C D E F G H I J │\n";
+    out += "───┼─────────────────────┼─\n";
 
     for(int i = 0; i < table_.size(); i++){
 
         if(i != 9){
-            std::cout << " " << i+1 << " │ ";
+            out += (" " + std::to_string(i+1) + " │ ");
         }else{
-            std::cout << i+1 << " │ ";
+            out += (std::to_string(i+1) + " │ ");
         }
 
         for(int j = 0; j < table_[i].size(); j++){
-            std::cout << table_[j][i] << " ";
+            out += (table_[j][i] + " ");
         }
 
-        std::cout << "│" << std::endl;
+        out += "│\n";
     }
 
-    std::cout << "───┼─────────────────────┼─" << std::endl;
+    out += "───┼─────────────────────┼─\n";
+
+    return out;
 
 }
 

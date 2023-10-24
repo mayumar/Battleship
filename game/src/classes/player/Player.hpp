@@ -12,7 +12,7 @@ class Player{
         bool isPlaying_;
     
     public:
-        inline Player(){}
+        Player();
         inline Player(std::string username, std::string password, int socket):
                       username_(username), password_(password), socket_(socket), 
                       isLogin_(false), isPlaying_(false){}

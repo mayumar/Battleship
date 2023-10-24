@@ -1,8 +1,10 @@
 #include <ctime>
 #include <vector>
 #include <iostream>
+#include <list>
 
 #include "aux.hpp"
+#include "../classes/player/Player.hpp"
 
 void generateRandomCoords(std::vector<int> &coords){
     for(int i = 0; i < 2; i++)
@@ -17,4 +19,16 @@ void cleanString(std::string &cad){
         if (c != '\n' && c != '\r') 
             cad += c;
     }
+}
+
+void addLoginPlayer(std::list<Player> &loginPlayers, Player &player){
+    if(!player.isLogin()) return;
+    loginPlayers.push_back(player);
+}
+
+Player searchPlayer(std::list<Player> &loginPlayers, int sd){
+    for(auto p : loginPlayers)
+        if(p.getSocket() == sd) return p;
+
+    return Player();
 }
