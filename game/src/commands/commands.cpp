@@ -93,7 +93,10 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
         signupCommand(client, buffer, sizeBuffer, loginPlayers, stream, p);
     else if(command == "HELP")
         helpCommand(buffer, sizeBuffer, client);
-    else {
+    else if(command == "INICIAR-PARTIDA") {
+        strcpy(buffer, "-Err. El usuario no esta logueado.\n");
+        send(client, buffer, sizeBuffer, 0);
+    } else {
         strcpy(buffer, "-Err. Comando incorrecto.\n");
         send(client, buffer, sizeBuffer, 0);
     }
