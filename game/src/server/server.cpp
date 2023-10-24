@@ -63,9 +63,7 @@ void setServer(){
     int clientsArray[MAX_CLIENTS];
     int numClients = 0;
 
-    Game game;
     std::queue<Player> players;
-    bool waiting = false;
 
     int i, j, k;
 
@@ -168,7 +166,7 @@ void setServer(){
                         if(received > 0){
                             if(strcmp(buffer, "SALIR") != 0){
                                 int sizeBuffer = sizeof(buffer);
-                                managedCommand(buffer, sizeBuffer, clientsArray[j], p, p2, players, game);
+                                managedCommand(buffer, sizeBuffer, clientsArray[j], p, p2, players);
                             } else exitClient(i, &readfs, numClients, clientsArray);
                         } else if(received == 0){
                             std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;

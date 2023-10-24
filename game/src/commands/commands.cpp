@@ -9,7 +9,7 @@
 #include "../classes/player/Player.hpp"
 
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Player &p2, 
-                    std::queue<Player> &players, Game &game){
+                    std::queue<Player> &players){
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
@@ -106,7 +106,8 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Playe
         stream >> word >> numSTR;
         int num = std::stoi(numSTR);
 
-        std::vector<int> realCoords = {coordsMap[word], num}; //VECTOR CON LAS COORDENADAS
+        std::vector<int> realCoords = {num, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
+                                                              //Va al revés por culpa de C++
 
         sprintf(buffer, "+Ok. Disparo en: %s, %d.\n", word.data(), num);
         send(client, buffer, sizeBuffer, 0);

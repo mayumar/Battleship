@@ -9,6 +9,6 @@
 #include "../classes/game/Game.hpp"
 
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p, Player &p2, 
-                    std::queue<Player> &players, Game &game);
+                    std::queue<Player> &players);
 
 #endif
