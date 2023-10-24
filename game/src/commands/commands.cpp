@@ -9,7 +9,8 @@
 #include "../server/server.hpp"
 #include "../classes/player/Player.hpp"
 
-void userCommand(int &client, char *buffer, int &sizeBuffer, std::istringstream &stream, Player &p) {
+void userCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &players,
+                 std::istringstream &stream, Player &p) {
     std::string username;
     stream >> username;
 
@@ -17,11 +18,13 @@ void userCommand(int &client, char *buffer, int &sizeBuffer, std::istringstream 
                             : strcpy(buffer, "-Err. Usuario incorrecto.\n");
 
     p.setUsername(username);
+    p.setSocket(client);
+    players.push_back(p);
     send(client, buffer, sizeBuffer, 0);
     return;
 }
 
-void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &loginPlayers, 
+void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &players, 
                      std::istringstream &stream, Player &p) {
     if(p.getUsername() == ""){
         strcpy(buffer, "-Err. No se ha introducido el nombre de usuario.\n");
@@ -34,15 +37,16 @@ void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Playe
     loginPass(password) ? strcpy(buffer, "+Ok. Usuario valido.\n") 
                         : strcpy(buffer, "-Err. Error en la validacion.\n");
     
-    p.setPassword(password);
-    p.setIsLogin(true);
-    p.setSocket(client);
-    addLoginPlayer(loginPlayers, p);
+    
+    auto it = findInList(players, p);
+    it->setPassword(password);
+    it->setIsLogin(true);
+
     send(client, buffer, sizeBuffer, 0);
     return;
 }
 
-void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> loginPlayers, 
+void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &players, 
                    std::istringstream &stream, Player &p) {
     std::string option, username, password;
     stream >> option >> username >> option >> password;
@@ -56,7 +60,7 @@ void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player>
 
     p.setIsLogin(true);
     p.setSocket(client);
-    addLoginPlayer(loginPlayers, p);
+    players.push_back(p);
     send(client, buffer, sizeBuffer, 0);
     return;
 }
@@ -75,7 +79,7 @@ void helpCommand(char *buffer, int &sizeBuffer, int &client) {
 }
 
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
-                    std::queue<Player> &players, std::list<Player> &loginPlayers){
+                    std::list<Player> &players){
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
@@ -86,11 +90,11 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     bzero(buffer, sizeBuffer);
 
     if(command == "USUARIO")
-        userCommand(client, buffer, sizeBuffer, stream, p);
+        userCommand(client, buffer, sizeBuffer, players, stream, p);
     else if(command == "PASSWORD") 
-        passwordCommand(client, buffer, sizeBuffer, loginPlayers, stream, p);
+        passwordCommand(client, buffer, sizeBuffer, players, stream, p);
     else if(command == "REGISTRO") 
-        signupCommand(client, buffer, sizeBuffer, loginPlayers, stream, p);
+        signupCommand(client, buffer, sizeBuffer, players, stream, p);
     else if(command == "HELP")
         helpCommand(buffer, sizeBuffer, client);
     else if(command == "INICIAR-PARTIDA") {

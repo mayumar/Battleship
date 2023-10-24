@@ -21,14 +21,28 @@ void cleanString(std::string &cad){
     }
 }
 
+/*
 void addLoginPlayer(std::list<Player> &loginPlayers, Player &player){
     if(!player.isLogin()) return;
     loginPlayers.push_back(player);
 }
+*/
 
-Player searchPlayer(std::list<Player> &loginPlayers, int sd){
-    for(auto p : loginPlayers)
+Player searchPlayer(std::list<Player> &players, int sd){
+    for(auto p : players)
         if(p.getSocket() == sd) return p;
 
     return Player();
+}
+
+std::list<Player>::iterator findInList(std::list<Player> &players, Player p){
+    std::list<Player>::iterator it;
+    
+    for(it = players.begin(); it != players.end(); it++){
+        if(it->getSocket() == p.getSocket()){
+            return it;
+        }
+    }
+
+    return players.end();
 }
