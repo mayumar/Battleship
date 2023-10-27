@@ -13,48 +13,7 @@
 #include <sstream>
 
 #include "client.hpp"
-
-void parseBoard(std::string &table, std::vector<std::vector<std::string>> &board) {
-    std::vector<std::string> row;
-    std::string elem;
-
-    for (char c : table) {
-        elem = std::string(1, c);
-        if (c == ';') {
-            board.push_back(row);
-            row.clear();
-        } else {
-            row.push_back(elem);
-        }
-    }
-}
-
-std::string showBoard(std::vector<std::vector<std::string>> &board) {
-    std::string out = "";
-
-    out = "   │ A B C D E F G H I J │\n";
-    out += "───┼─────────────────────┼─\n";
-
-    for(int i = 0; i < board.size(); i++){
-
-        if(i != 9){
-            out += (" " + std::to_string(i+1) + " │ ");
-        }else{
-            out += (std::to_string(i+1) + " │ ");
-        }
-
-        for(int j = 0; j < board[i].size(); j++){
-            std::string point = board[j][i];
-            out += (point + " ");
-        }
-
-        out += "│\n";
-    }
-
-    out += "───┼─────────────────────┼─\n";
-
-    return out;
-}
+#include "client_game.hpp"
 
 int main(){
     int sd;
@@ -66,6 +25,10 @@ int main(){
     bool end = false;
     const int PORT = 2065;
 
+    std::vector<std::vector<std::string>> board;
+    board = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "-"));
+    std::vector<int> shot(2);
+    
     sd = socket(AF_INET, SOCK_STREAM, 0);
 
     if(sd == -1){
@@ -103,14 +66,44 @@ int main(){
 
             std::string stringBuffer = buffer;
 
-            std::string subcadena = "+Ok. Empezamos partida.";
+            std::string startingString = "+Ok. Empieza la partida.";
+            std::string waterString = "+Ok. AGUA: ";
+            std::string hittedString = "+Ok. TOCADO: ";
+            std::string sinkedString = "+Ok. HUNDIDO: ";
             size_t pos;
 
-            if((pos = stringBuffer.find(subcadena)) != std::string::npos) {
-                std::string formatTable = stringBuffer.substr(pos + subcadena.length());
-                std::vector<std::vector<std::string>> board;
-                parseBoard(formatTable, board);
+            if((pos = stringBuffer.find(startingString)) != std::string::npos) {
+                
+                std::cout << startingString << std::endl << std::endl;
+                std::string formatTable = stringBuffer.substr(pos + startingString.length());
+                std::vector<std::vector<std::string>> my_board;
+                parseBoard(formatTable, my_board);
+                stringBuffer = showBoard(my_board);
+
+            }else if((pos = stringBuffer.find(waterString)) != std::string::npos){
+                
+                std::cout << stringBuffer << std::endl << std::endl;
+                std::string coords = stringBuffer.substr(pos + waterString.length());
+                getCoords(coords, shot);
+                board[shot[1]][shot[0]] = "A";
                 stringBuffer = showBoard(board);
+
+            }else if((pos = stringBuffer.find(hittedString)) != std::string::npos){
+                
+                std::cout << stringBuffer << std::endl << std::endl;
+                std::string coords = stringBuffer.substr(pos + hittedString.length());
+                getCoords(coords, shot);
+                board[shot[1]][shot[0]] = "X";
+                stringBuffer = showBoard(board);
+
+            }else if((pos = stringBuffer.find(sinkedString)) != std::string::npos){
+                
+                std::cout << stringBuffer << std::endl << std::endl;
+                std::string coords = stringBuffer.substr(pos + sinkedString.length());
+                getCoords(coords, shot);
+                board[shot[1]][shot[0]] = "X";
+                stringBuffer = showBoard(board);
+
             }
             
             std::cout << std::endl << stringBuffer << std::endl;
