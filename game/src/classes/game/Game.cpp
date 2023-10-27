@@ -7,18 +7,18 @@
 
 void Game::createGame(int &sizeBuffer){
 
-    std::string stringBufferP1 = "+Ok. Empezamos partida.";
+    std::string stringBufferP1 = "+Ok. Empieza la partida.";
     std::string stringBufferP2 = stringBufferP1;
 
     boardp1_.setStartGame();
 
     stringBufferP1 += boardp1_.showBoard();
-    boardp1_.showServerBoard();
+    //boardp1_.showServerBoard();
     
     boardp2_.setStartGame();
 
     stringBufferP2 += boardp2_.showBoard();
-    boardp2_.showServerBoard();
+    //boardp2_.showServerBoard();
 
     turn_ = 1;
 
