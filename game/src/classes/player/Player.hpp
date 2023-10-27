@@ -28,6 +28,8 @@ class Player{
         inline void setSocket(int socket){socket_ = socket;}
         inline void setIsLogin(bool isLogin){isLogin_ = isLogin;}
         inline void setIsPlaying(bool isPlaying){isPlaying_ = isPlaying;}
+
+        inline bool operator==(const Player& other) const {return this->socket_ == other.socket_;}
 };
 
 #endif

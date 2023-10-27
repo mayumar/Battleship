@@ -19,7 +19,7 @@
 #define MSG_SIZE 250
 #define MAX_CLIENTS 30
 
-void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], Game &game){
+void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], Game &game, std::list<Player> &players){
     char buffer[MSG_SIZE];
     int j;
 
@@ -38,6 +38,8 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
 
     bzero(buffer, sizeof(buffer));
     strcpy(buffer, "+Ok. Tu oponente se ha desconectado.");
+    
+    removePlayerFromList(players, socket);
 
     if(game.getP1().getSocket() == socket)
         send(game.getP2().getSocket(), buffer, sizeof(buffer), 0);
@@ -46,7 +48,7 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
 }
 
 void manager(int signum){
-    std::cout << std::endl << "Se ha recibido la señal siginit" << std::endl;
+    std::cout << std::endl << "Saliendo..." << std::endl;
     exit(-1);
     signal(SIGINT, manager);
     //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
@@ -56,7 +58,7 @@ void setServer(){
     int sd, newSd;
     struct sockaddr_in socnkName, from;
     char buffer[MSG_SIZE];
-    const int PORT = 2000;
+    const int PORT = 2065;
 
     socklen_t fromLen;
     fd_set readfs, auxfds;
@@ -129,10 +131,9 @@ void setServer(){
                                 strcpy(buffer, "+OK. Usuario conectado\n");
                                 send(newSd, buffer, sizeof(buffer), 0);
                                 
-                                //NECESARIO????
                                 for(j = 0; j < (numClients-1); j++){
                                     bzero(buffer, sizeof(buffer));
-                                    sprintf(buffer, "Nuevo cliente conectado <%d>", newSd);
+                                    sprintf(buffer, "Nuevo jugador conectado <%d>", newSd);
                                     send(clientsArray[j], buffer, sizeof(buffer), 0);
                                 }
 
@@ -167,7 +168,7 @@ void setServer(){
                         received = recv(i, buffer, sizeof(buffer), 0);
 
                         if(received > 0){
-                            if(strcmp(buffer, "SALIR") != 0){
+                            if(strcmp(buffer, "SALIR\n") != 0){
                                 int sizeBuffer = sizeof(buffer);
                                 
                                 p = searchPlayer(players, i);
@@ -227,19 +228,27 @@ void setServer(){
 
                                     if(game.getBoardp1().getshipsAlive() == 0){
                                         gameOver = ("+Ok. " + game.getP2().getUsername() + " ha ganado\n");
+                                        // EL JUGADOR DEBE SALIR DEL JUEGO O SOLO DE LA PARTIDA??????
+                                        // exitClient(game.getP1().getSocket(), &readfs, numClients, clientsArray, game);
                                     }else if(game.getBoardp2().getshipsAlive() == 0){
                                         gameOver = ("+Ok. " + game.getP1().getUsername() + " ha ganado\n");
+                                        // exitClient(game.getP2().getSocket(), &readfs, numClients, clientsArray, game);
                                     }
+
+                                    // NO HARIA FALTA NO?
+                                    // game.getP1().setIsPlaying(false);
+                                    // game.getP2().setIsPlaying(false);
+                                    p.setIsPlaying(false);
 
                                     send(game.getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
                                     send(game.getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
                                     
                                 }
                                 
-                            } else exitClient(i, &readfs, numClients, clientsArray, game);
+                            } else exitClient(i, &readfs, numClients, clientsArray, game, players);
                         } else if(received == 0){
-                            std::cout << "El socket <" << i << "> se ha cerrado con CTRL+C" << std::endl;
-                            exitClient(i, &readfs, numClients, clientsArray, game);
+                            std::cout << "El jugador <" << i << "> ha salido del juego" << std::endl;
+                            exitClient(i, &readfs, numClients, clientsArray, game, players);
                         }
                     }      
                 }

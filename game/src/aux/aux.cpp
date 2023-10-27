@@ -46,3 +46,9 @@ std::list<Player>::iterator findInList(std::list<Player> &players, Player p){
 
     return players.end();
 }
+
+void removePlayerFromList(std::list<Player> &players, int &sd){
+    auto p = searchPlayer(players, sd);
+    if(p.getUsername() == "" || p.getPassword() == "") return;
+    players.remove(p);
+}

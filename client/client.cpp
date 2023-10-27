@@ -64,6 +64,7 @@ int main(){
     fd_set readfds, auxfds;
     int exitSelect;
     bool end = false;
+    const int PORT = 2065;
 
     sd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -73,7 +74,7 @@ int main(){
     }
 
     sockName.sin_family = AF_INET;
-	sockName.sin_port = htons(2000);
+	sockName.sin_port = htons(PORT);
 	sockName.sin_addr.s_addr =  inet_addr("127.0.0.1"); //127.0.0.1
 
 	/* ------------------------------------------------------------------

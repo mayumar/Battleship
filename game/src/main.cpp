@@ -7,7 +7,7 @@
 #include <vector>
 
 int main(){
-    // srand(time(nullptr));
+    srand(time(nullptr));
     // Game game;
     // game.createGame();
 
