@@ -228,18 +228,16 @@ void setServer(){
 
                                     if(game.getBoardp1().getshipsAlive() == 0){
                                         gameOver = ("+Ok. " + game.getP2().getUsername() + " ha ganado\n");
-                                        // EL JUGADOR DEBE SALIR DEL JUEGO O SOLO DE LA PARTIDA??????
-                                        // exitClient(game.getP1().getSocket(), &readfs, numClients, clientsArray, game);
+                                        game.getP1().setIsPlaying(false);
+                                        game.getP2().setIsPlaying(false);
+                                        p.setIsPlaying(false);
                                     }else if(game.getBoardp2().getshipsAlive() == 0){
                                         gameOver = ("+Ok. " + game.getP1().getUsername() + " ha ganado\n");
-                                        // exitClient(game.getP2().getSocket(), &readfs, numClients, clientsArray, game);
+                                        game.getP1().setIsPlaying(false);
+                                        game.getP2().setIsPlaying(false);
+                                        p.setIsPlaying(false);
                                     }
-
-                                    // NO HARIA FALTA NO?
-                                    // game.getP1().setIsPlaying(false);
-                                    // game.getP2().setIsPlaying(false);
-                                    p.setIsPlaying(false);
-
+                                   
                                     send(game.getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
                                     send(game.getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
                                     
