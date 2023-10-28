@@ -5,6 +5,7 @@
 
 #include "aux.hpp"
 #include "../classes/player/Player.hpp"
+#include "../classes/game/Game.hpp"
 
 void generateRandomCoords(std::vector<int> &coords){
     for(int i = 0; i < 2; i++)
@@ -20,13 +21,6 @@ void cleanString(std::string &cad){
             cad += c;
     }
 }
-
-/*
-void addLoginPlayer(std::list<Player> &loginPlayers, Player &player){
-    if(!player.isLogin()) return;
-    loginPlayers.push_back(player);
-}
-*/
 
 Player searchPlayer(std::list<Player> &players, int sd){
     for(auto p : players)
@@ -47,8 +41,27 @@ std::list<Player>::iterator findInList(std::list<Player> &players, Player p){
     return players.end();
 }
 
+std::list<Game>::iterator findInList(std::list<Game> &games, Player p){
+    std::list<Game>::iterator it;
+
+    for(it = games.begin(); it != games.end(); it++){
+        if(it->getP1() == p){
+            return it;
+        }else if(it->getP2() == p){
+            return it;
+        }
+    }
+
+    return games.end();
+}
+
 void removePlayerFromList(std::list<Player> &players, int &sd){
     auto p = searchPlayer(players, sd);
     if(p.getUsername() == "" || p.getPassword() == "") return;
     players.remove(p);
+}
+
+void removeGameFromList(std::list<Game> &games, Player p){
+    auto g = findInList(games, p);
+    games.erase(g);
 }

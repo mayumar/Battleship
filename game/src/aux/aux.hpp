@@ -6,6 +6,7 @@
 #include <list>
 
 #include "../classes/player/Player.hpp"
+#include "../classes/game/Game.hpp"
 
 void generateRandomCoords(std::vector<int> &coords);
 void cleanString(std::string &cad);
@@ -13,5 +14,6 @@ void cleanString(std::string &cad);
 Player searchPlayer(std::list<Player> &players, int sd);
 void removePlayerFromList(std::list<Player> &players, int &sd);
 std::list<Player>::iterator findInList(std::list<Player> &players, Player p);
+std::list<Game>::iterator findInList(std::list<Game> &games, Player p);
 
 #endif

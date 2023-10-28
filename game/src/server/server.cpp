@@ -19,7 +19,7 @@
 #define MSG_SIZE 250
 #define MAX_CLIENTS 30
 
-void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], Game &game, std::list<Player> &players){
+void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], std::list<Game> &games, std::list<Player> &players){
     char buffer[MSG_SIZE];
     int j;
 
@@ -37,14 +37,28 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
     numClients--;
 
     bzero(buffer, sizeof(buffer));
-    strcpy(buffer, "+Ok. Tu oponente se ha desconectado.");
-    
+    strcpy(buffer, "+Ok. Tu oponente se ha desconectado.\n");
+
+    auto itGame = findInList(games, searchPlayer(players, socket));    
+
     removePlayerFromList(players, socket);
 
-    if(game.getP1().getSocket() == socket)
-        send(game.getP2().getSocket(), buffer, sizeof(buffer), 0);
-    else if(game.getP2().getSocket() == socket)
-        send(game.getP1().getSocket(), buffer, sizeof(buffer), 0);
+    if(itGame->getP1().getSocket() == socket){
+
+        auto p = searchPlayer(players, itGame->getP2().getSocket());
+        send(p.getSocket(), buffer, sizeof(buffer), 0);
+        auto itPlayer = findInList(players, p);
+        itPlayer->setIsPlaying(false);
+
+    }else if(itGame->getP2().getSocket() == socket){
+        auto p = searchPlayer(players, itGame->getP1().getSocket());
+        send(p.getSocket(), buffer, sizeof(buffer), 0);
+        auto itPlayer = findInList(players, p);
+        itPlayer->setIsPlaying(false);
+    }
+
+    games.erase(itGame);
+
 }
 
 void manager(int signum){
@@ -68,7 +82,7 @@ void setServer(){
     int numClients = 0;
     
     Player p, p2;
-    Game game;
+    std::list<Game> games;
     std::queue<Player> waitingPlayers;
     std::list<Player> players;
 
@@ -170,8 +184,8 @@ void setServer(){
                         if(received > 0){
                             if(strcmp(buffer, "SALIR\n") != 0){
                                 int sizeBuffer = sizeof(buffer);
-                                
                                 p = searchPlayer(players, i);
+                                auto itGame = findInList(games, p);
 
                                 if(!p.isLogin() && !p.isPlaying()){
 
@@ -187,6 +201,7 @@ void setServer(){
 
                                     } else {
 
+                                        Game game;
                                         p2 = waitingPlayers.front();
                                         waitingPlayers.pop();
 
@@ -200,6 +215,7 @@ void setServer(){
                                         game.setP1(p2);
                                         game.setP2(p);
                                         game.createGame(sizeBuffer);
+                                        games.push_back(game);
                                         strcpy(buffer, "+Ok. Turno de partida.\n");
                                         send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
 
@@ -207,32 +223,32 @@ void setServer(){
                                     
                                 } else if(p.isPlaying()) {
 
-                                    if(game.getTurn() == 1){
-                                        if(game.getP2().getSocket() == i){
+                                    if(itGame->getTurn() == 1){
+                                        if(itGame->getP2().getSocket() == i){
                                             strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
                                         }else{
-                                            managedGameCommands(buffer, sizeBuffer, i, game);
+                                            managedGameCommands(buffer, sizeBuffer, i, *itGame);
                                             strcpy(buffer, "+Ok. Turno de partida.\n");
-                                            send(game.getP2().getSocket(), buffer, sizeBuffer, 0);
+                                            send(itGame->getP2().getSocket(), buffer, sizeBuffer, 0);
                                         }
-                                    }else if(game.getTurn() == 2){
-                                        if(game.getP1().getSocket() == i){
+                                    }else if(itGame->getTurn() == 2){
+                                        if(itGame->getP1().getSocket() == i){
                                             strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
                                         }else{
-                                            managedGameCommands(buffer, sizeBuffer, i, game);
+                                            managedGameCommands(buffer, sizeBuffer, i, *itGame);
                                             strcpy(buffer, "+Ok. Turno de partida.\n");
-                                            send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
+                                            send(itGame->getP1().getSocket(), buffer, sizeBuffer, 0);
                                         }
                                     }
 
                                     std::string gameOver;
 
-                                    if(game.getBoardp1().getshipsAlive() == 0){
-                                        gameOver = ("+Ok. " + game.getP2().getUsername() + " ha ganado\n");
-                                        game.getP1().setIsPlaying(false);
-                                        game.getP2().setIsPlaying(false);
+                                    if(itGame->getBoardp1().getshipsAlive() == 0){
+                                        gameOver = ("+Ok. " + itGame->getP2().getUsername() + " ha ganado\n");
+                                        // game.getP1().setIsPlaying(false);
+                                        // game.getP2().setIsPlaying(false);
                                         // players.remove(p);
                                         // p.setIsPlaying(false);
                                         // players.push_back(p);
@@ -240,15 +256,17 @@ void setServer(){
                                         // players.remove(p2);
                                         // p2.setIsPlaying(false);
                                         // players.push_back(p2);
-                                        auto itWinner = findInList(players, game.getP2());
+                                        auto itWinner = findInList(players, itGame->getP2());
                                         itWinner->setIsPlaying(false);
-                                        auto itLoser = findInList(players, game.getP1());
+                                        auto itLoser = findInList(players, itGame->getP1());
                                         itLoser->setIsPlaying(false);
-                                        game.clearBoards();
-                                    } else if(game.getBoardp2().getshipsAlive() == 0){
-                                        gameOver = ("+Ok. " + game.getP1().getUsername() + " ha ganado\n");
-                                        game.getP1().setIsPlaying(false);
-                                        game.getP2().setIsPlaying(false);
+                                        send(itGame->getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
+                                        send(itGame->getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
+                                        games.erase(itGame);
+                                    } else if(itGame->getBoardp2().getshipsAlive() == 0){
+                                        gameOver = ("+Ok. " + itGame->getP1().getUsername() + " ha ganado\n");
+                                        // game.getP1().setIsPlaying(false);
+                                        // game.getP2().setIsPlaying(false);
                                         // players.remove(p);
                                         // p.setIsPlaying(false);
                                         // players.push_back(p);
@@ -256,22 +274,21 @@ void setServer(){
                                         // players.remove(p2);
                                         // p2.setIsPlaying(false);
                                         // players.push_back(p2);
-                                        auto itWinner = findInList(players, game.getP1());
+                                        auto itWinner = findInList(players, itGame->getP1());
                                         itWinner->setIsPlaying(false);
-                                        auto itLoser = findInList(players, game.getP2());
+                                        auto itLoser = findInList(players, itGame->getP2());
                                         itLoser->setIsPlaying(false);
-                                        game.clearBoards();
+                                        send(itGame->getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
+                                        send(itGame->getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
+                                        games.erase(itGame);
                                     }
-                                   
-                                    send(game.getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
-                                    send(game.getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
-                                    
+                                
                                 }
                                 
-                            } else exitClient(i, &readfs, numClients, clientsArray, game, players);
+                            } else exitClient(i, &readfs, numClients, clientsArray, games, players);
                         } else if(received == 0){
                             std::cout << "El jugador <" << i << "> ha salido del juego" << std::endl;
-                            exitClient(i, &readfs, numClients, clientsArray, game, players);
+                            exitClient(i, &readfs, numClients, clientsArray, games, players);
                         }
                     }      
                 }

@@ -5,7 +5,7 @@
 #include <list>
 #include "../classes/game/Game.hpp"
 
-void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], Game &game, std::list<Player> &players);
+void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], std::list<Game> &games, std::list<Player> &players);
 void manager(int signum);
 void setServer();
 
