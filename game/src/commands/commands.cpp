@@ -253,6 +253,12 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
             return;
         }
 
+        if(coordsMap.find(word) == coordsMap.end()) {
+            strcpy(buffer, "-Err. Ha introducido mal las coordenadas.\n");
+            send(client, buffer, sizeBuffer, 0);
+            return;
+        }
+
         std::vector<int> realCoords = {num-1, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
                                                                 //Va al revés por culpa de C++
 
