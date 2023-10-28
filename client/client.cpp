@@ -92,8 +92,11 @@ int main(){
 
                 manageReponse(stringBuffer, board);
             }
-            
+
             std::cout << std::endl << stringBuffer << std::endl;
+
+            if(stringBuffer == "+Ok. Tu oponente ha terminado la partida.\n")
+                std::cout << std::endl << "Para volver a jugar, introduzca INICIAR-PARTIDA" << std::endl << std::endl;            
 
             if(strcmp(buffer, "Demasiados clientes conectados\n") == 0 || strcmp(buffer,"Desconexión servidor\n") == 0)
                 end = true;

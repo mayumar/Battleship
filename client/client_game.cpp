@@ -5,16 +5,22 @@
 void parseBoard(std::string &table, std::vector<std::vector<std::string>> &board) {
     std::vector<std::string> row;
     std::string elem;
+    std::vector<std::vector<std::string>> auxboard;
 
     for (char c : table) {
         elem = std::string(1, c);
-        if (c == ';') {
-            board.push_back(row);
+
+        if(c == 'A'){
+            row.push_back("-");
+        }else if(c == 'B'){
+            row.push_back("B");
+        }else{
+            auxboard.push_back(row);
             row.clear();
-        } else {
-            row.push_back(elem);
         }
     }
+
+    board = auxboard;
 }
 
 std::string showBoard(std::vector<std::vector<std::string>> &board) {

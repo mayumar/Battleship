@@ -5,7 +5,7 @@
 #include "../../aux/aux.hpp"
 
 Board::Board(){
-    table_ = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "-"));
+    table_ = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "A"));
     ships_ = std::vector<Ship>();
     ships_alive_ = 0;
 }
