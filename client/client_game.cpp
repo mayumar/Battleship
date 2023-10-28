@@ -68,3 +68,30 @@ void getCoords(std::string coords, std::vector<int> &shot){
     shot = {num-1, coordsMap[word]};
     
 }
+
+void sinkShip(std::vector<std::vector<std::string>> &board, std::vector<int> &lastShot){
+    bool vertical = false;
+    if(lastShot[0] > 0 && board[lastShot[1]][lastShot[0]-1] == "X"){
+        vertical = true;
+    }else if(lastShot[0] < 9 && board[lastShot[1]][lastShot[0]+1] == "X"){
+        vertical = true;
+    }
+    
+    if(vertical){
+        for(int i = lastShot[0]; i >= 0 && board[lastShot[1]][i] == "X"; i--){
+            board[lastShot[1]][i] = "◉";
+        }
+
+        for(int i = lastShot[0]; i < 10 && board[lastShot[1]][i] == "X"; i++){
+            board[lastShot[1]][i] = "◉";
+        }
+    }else{
+        for(int i = lastShot[1]; i >= 0 && board[i][lastShot[0]] == "X"; i--){
+            board[i][lastShot[0]] = "◉";
+        }
+
+        for(int i = lastShot[1]; i < 10 && board[i][lastShot[0]] == "X"; i++){
+            board[i][lastShot[1]] = "◉";
+        }
+    }
+}

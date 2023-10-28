@@ -85,7 +85,10 @@ int main(){
                 std::cout << stringBuffer << std::endl << std::endl;
                 std::string coords = stringBuffer.substr(pos + waterString.length());
                 getCoords(coords, shot);
-                board[shot[1]][shot[0]] = "A";
+
+                if(board[shot[1]][shot[0]] == "-")
+                    board[shot[1]][shot[0]] = "A";
+
                 stringBuffer = showBoard(board);
 
             }else if((pos = stringBuffer.find(hittedString)) != std::string::npos){
@@ -102,6 +105,7 @@ int main(){
                 std::string coords = stringBuffer.substr(pos + sinkedString.length());
                 getCoords(coords, shot);
                 board[shot[1]][shot[0]] = "X";
+                sinkShip(board, shot);
                 stringBuffer = showBoard(board);
 
             }
