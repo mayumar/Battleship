@@ -34,7 +34,7 @@ bool loginUsername(std::string user){
     return false;
 }
 
-bool loginPass(std::string password){
+bool loginPass(std::string user, std::string password){
     std::ifstream file("../src/files/users.txt");
 
     if(!file){
@@ -52,9 +52,11 @@ bool loginPass(std::string password){
             return false;
         }
 
+        std::string userDB = line.substr(0, pos);
+
         std::string passwordDB = line.substr(pos+1);
 
-        if(passwordDB == password){
+        if(userDB == user && passwordDB == password){
             file.close();
             return true;
         }

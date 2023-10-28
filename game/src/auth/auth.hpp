@@ -5,7 +5,7 @@
 #include "../classes/player/Player.hpp"
 
 bool loginUsername(std::string user);
-bool loginPass(std::string password);
+bool loginPass(std::string user, std::string password);
 Player signup(std::string username, std::string password, int socket);
 
 #endif

@@ -48,7 +48,7 @@ void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Playe
     std::string password;
     stream >> password;
 
-    if(!loginPass(password)){
+    if(!loginPass(p.getUsername(), password) || !loginUsername(p.getUsername())){
         strcpy(buffer, "-Err. Error en la validacion.\n");
         send(client, buffer, sizeBuffer, 0);
         return;
