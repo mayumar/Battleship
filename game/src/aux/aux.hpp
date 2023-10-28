@@ -11,7 +11,6 @@
 
 void generateRandomCoords(std::vector<int> &coords);
 void cleanString(std::string &cad);
-void upper(std::string &s);
 Player searchPlayer(std::list<Player> &players, int sd);
 void removePlayerFromList(std::list<Player> &players, int &sd);
 std::list<Player>::iterator findInList(std::list<Player> &players, Player p);

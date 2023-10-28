@@ -17,7 +17,6 @@ bool checkCommands(char *buffer) {
     std::string command;
     stream >> command;
 
-    upper(command);
 
     std::vector<std::string> validCommads = {
         "USUARIO",
@@ -181,9 +180,6 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     std::string command;
     stream >> command;
 
-    upper(command);
-
-    
     bzero(buffer, sizeBuffer);
 
     if(command == "USUARIO")
@@ -227,13 +223,9 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
     std::string command;
     stream >> command;
 
-    upper(command);
-
-
     if(command == "DISPARO"){
         std::string coords, word, numSTR;
         stream >> coords;
-        upper(coords);
 
         std::istringstream ss(coords);
 
@@ -242,8 +234,6 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
             send(client, buffer, sizeBuffer, 0);
             return;
         }
-
-        upper(word);
 
         int num = std::stoi(numSTR);
 
