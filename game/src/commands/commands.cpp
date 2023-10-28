@@ -20,6 +20,14 @@ void userCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &
         return;
     }
 
+    for(auto it = players.begin(); it != players.end(); it++){
+        if(it->getUsername() == username){
+            strcpy(buffer, "-Err. Usuario en uso.\n");
+            send(client, buffer, sizeBuffer, 0);
+            return;
+        }
+    }
+
     strcpy(buffer, "+Ok. Usuario correcto.\n");
 
     p.setUsername(username);
