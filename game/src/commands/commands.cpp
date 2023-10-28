@@ -158,7 +158,7 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
         std::vector<int> realCoords = {num-1, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
                                                                 //Va al revés por culpa de C++
 
-        sprintf(buffer, "+Ok. Disparo en: %s, %d.\n", word.data(), num);
+        sprintf(buffer, "+Ok. Disparo en: %s,%d.\n", word.data(), num);
 
         if(game.getP1().getSocket() == client)
             send(game.getP2().getSocket(), buffer, sizeBuffer, 0);

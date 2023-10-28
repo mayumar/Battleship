@@ -26,8 +26,9 @@ int main(){
     bool end = false;
     const int PORT = 2065;
 
-    std::vector<std::vector<std::string>> board;
-    board = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "-"));    
+    std::vector<std::vector<std::string>> my_board, board, p2Board;
+    board = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "-"));
+
     sd = socket(AF_INET, SOCK_STREAM, 0);
 
     if(sd == -1){
@@ -66,15 +67,30 @@ int main(){
             std::string stringBuffer = buffer;
         
             std::string startingString = "+Ok. Empieza la partida.";
+            std::string shotString = "+Ok. Disparo en: ";
             size_t pos;
 
             if((pos = stringBuffer.find(startingString)) != std::string::npos) {
-                std::cout << startingString << std::endl << std::endl;
+
+                std::cout << std::endl << startingString << std::endl << std::endl;
+
+                std::cout << "======== MIS BARCOS =======" << std::endl;
+                
                 std::string formatTable = stringBuffer.substr(pos + startingString.length());
-                std::vector<std::vector<std::string>> my_board;
                 parseBoard(formatTable, my_board);
                 stringBuffer = showBoard(my_board);
-            }else{
+
+            } else if((pos = stringBuffer.find(shotString)) != std::string::npos) {
+                std::cout << std::endl << stringBuffer << std::endl << std::endl;
+                
+                std::cout << "========= OPONENTE ========" << std::endl;
+
+                std::string coords = stringBuffer.substr(pos + shotString.length());
+                p2Game(coords, my_board);
+
+                stringBuffer = showBoard(my_board);
+            } else {
+
                 manageReponse(stringBuffer, board);
             }
             

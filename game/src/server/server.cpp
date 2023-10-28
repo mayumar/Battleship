@@ -200,6 +200,8 @@ void setServer(){
                                         game.setP1(p2);
                                         game.setP2(p);
                                         game.createGame(sizeBuffer);
+                                        strcpy(buffer, "+Ok. Turno de partida.\n");
+                                        send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
 
                                     }
                                     
@@ -207,17 +209,21 @@ void setServer(){
 
                                     if(game.getTurn() == 1){
                                         if(game.getP2().getSocket() == i){
-                                            strcpy(buffer, "-Err. Debe esperar su turno\n");
+                                            strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
                                         }else{
                                             managedGameCommands(buffer, sizeBuffer, i, game);
+                                            strcpy(buffer, "+Ok. Turno de partida.\n");
+                                            send(game.getP2().getSocket(), buffer, sizeBuffer, 0);
                                         }
                                     }else if(game.getTurn() == 2){
                                         if(game.getP1().getSocket() == i){
-                                            strcpy(buffer, "-Err. Debe esperar su turno\n");
+                                            strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
                                         }else{
                                             managedGameCommands(buffer, sizeBuffer, i, game);
+                                            strcpy(buffer, "+Ok. Turno de partida.\n");
+                                            send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
                                         }
                                     }
 

@@ -95,3 +95,50 @@ void sinkShip(std::vector<std::vector<std::string>> &board, std::vector<int> &la
         }
     }
 }
+
+bool isSinked(std::vector<std::vector<std::string>> &board, std::vector<int> &lastShot){
+    if(lastShot[0] > 0 && board[lastShot[1]][lastShot[0]-1] == "B"){
+        return false;
+    }else if(lastShot[0] < 9 && board[lastShot[1]][lastShot[0]+1] == "B"){
+        return false;
+    }else if(lastShot[1] > 0 && board[lastShot[1]-1][lastShot[0]] == "B"){
+        return false;
+    }else if(lastShot[1] < 9 && board[lastShot[1]+1][lastShot[0]] == "B"){
+        return false;
+    }
+
+    bool vertical = false;
+    if(lastShot[0] > 0 && board[lastShot[1]][lastShot[0]-1] == "X"){
+        vertical = true;
+    }else if(lastShot[0] < 9 && board[lastShot[1]][lastShot[0]+1] == "X"){
+        vertical = true;
+    }
+
+    if(vertical){
+        for(int i = lastShot[0]; i >= 0 && board[lastShot[1]][i] != "-" && board[lastShot[1]][i] != "A"; i--){
+            if(board[lastShot[1]][i] == "B"){
+                return false;
+            }
+        }
+
+        for(int i = lastShot[0]; i < 10 && board[lastShot[1]][i] != "-" && board[lastShot[1]][i] != "A"; i++){
+            if(board[lastShot[1]][i] == "B"){
+                return false;
+            }
+        }
+    }else{
+        for(int i = lastShot[1]; i >= 0 && board[i][lastShot[0]] != "-" && board[i][lastShot[0]] != "A"; i--){
+            if(board[i][lastShot[0]] == "B"){
+                return false;
+            }
+        }
+
+        for(int i = lastShot[1]; i < 10 && board[i][lastShot[0]] != "-" && board[i][lastShot[0]] != "A"; i++){
+            if(board[i][lastShot[0]] == "B"){
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
