@@ -134,6 +134,9 @@ void setGame(char *buffer, int &sizeBuffer, std::list<Player> &players, std::que
         game.createGame(sizeBuffer);
         games.push_back(game);
         
+        strcpy(buffer, "+Ok. Turno de partida.\n");
+        send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
+
     }
 }
 
@@ -196,8 +199,6 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
         upper(coords);
 
         std::istringstream ss(coords);
-        // std::getline(ss, word, ',');
-        // std::getline(ss, numSTR);
 
         if(!std::getline(ss, word, ',') || !std::getline(ss, numSTR) || !std::isdigit(numSTR[0]) || std::isdigit(word[0])){
             strcpy(buffer, "-Err. Ha introducido mal las coordenadas.\n");
@@ -226,7 +227,16 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
             send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
         }
 
-        game.shot(realCoords, coords, sizeBuffer);        
+        game.shot(realCoords, coords, sizeBuffer);
+
+        if(game.getTurn() == 1){
+            strcpy(buffer, "+Ok. Turno de partida.\n");
+            send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
+        }else{
+            strcpy(buffer, "+Ok. Turno de partida.\n");
+            send(game.getP2().getSocket(), buffer, sizeBuffer, 0);
+        }
+
         return;
     } else if(command == "HELP") {
         helpCommand(buffer, sizeBuffer, client);

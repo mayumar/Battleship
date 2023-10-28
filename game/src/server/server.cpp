@@ -222,9 +222,9 @@ void setServer(){
                                     
                                 } else if(p.isPlaying()) {
 
+                                    std::string stringBuffer = buffer;
+
                                     if(itGame->getTurn() == 1){
-                                        strcpy(buffer, "+Ok. Turno de partida.\n");
-                                        send(itGame->getP1().getSocket(), buffer, sizeBuffer, 0);
                                         if(itGame->getP2().getSocket() == i){
                                             strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
@@ -232,8 +232,6 @@ void setServer(){
                                             managedGameCommands(buffer, sizeBuffer, i, *itGame);
                                         }
                                     }else if(itGame->getTurn() == 2){
-                                        strcpy(buffer, "+Ok. Turno de partida.\n");
-                                        send(itGame->getP2().getSocket(), buffer, sizeBuffer, 0);
                                         if(itGame->getP1().getSocket() == i){
                                             strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
