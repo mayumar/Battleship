@@ -65,7 +65,6 @@ void manager(int signum){
     std::cout << std::endl << "Saliendo..." << std::endl;
     exit(-1);
     signal(SIGINT, manager);
-    //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
 }
 
 void gameOver(int &sizeBuffer, Player &p, std::list<Player> &players, std::list<Game> &games){
@@ -199,9 +198,7 @@ void setServer(){
                             close(sd);
                             exit(-1);
                         }
-                        //Mensajes que se quieran mandar a los clientes (implementar)
                     } else {
-                        //Server recibe datos
                         bzero(buffer, sizeof(buffer));
                         received = recv(i, buffer, sizeof(buffer), 0);
 
@@ -251,7 +248,7 @@ void setServer(){
                             std::cout << "El jugador <" << i << "> ha salido del juego" << std::endl;
                             exitClient(i, &readfs, numClients, clientsArray, games, players, waitingPlayers);
                         }
-                    }      
+                    }
                 }
             }
         }
