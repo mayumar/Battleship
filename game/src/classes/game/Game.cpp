@@ -32,7 +32,7 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
     if(turn_ == 1){
         if(boardp2_.getTable()[shot[1]][shot[0]] == "B"){
             boardp2_.setShot(shot);
-            boardp2_.showServerBoard();
+            //boardp2_.showServerBoard();
             //std::cout << "BOOOOOM" << std::endl;
             buffer = "+Ok. TOCADO: " + coords;
 
@@ -47,7 +47,7 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
 
             return true;
         }else{
-            boardp2_.showServerBoard();
+            //boardp2_.showServerBoard();
             //std::cout << "AGUA" << std::endl;
             buffer = "+Ok. AGUA: " + coords;
 
@@ -62,7 +62,7 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
 
         if(boardp1_.getTable()[shot[1]][shot[0]] == "B"){
             boardp1_.setShot(shot);
-            boardp1_.showServerBoard();
+            //boardp1_.showServerBoard();
             //std::cout << "BOOOOOM" << std::endl;
             buffer = "+Ok. TOCADO: " + coords;
 
@@ -76,7 +76,7 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
             turn_ = 1;
             return true;
         }else{
-            boardp1_.showServerBoard();
+            //boardp1_.showServerBoard();
             //std::cout << "AGUA" << std::endl;
             buffer = "+Ok. AGUA: " + coords;
             send(p2_.getSocket(), buffer.data(), sizeBuffer, 0);
