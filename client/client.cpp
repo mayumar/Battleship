@@ -14,6 +14,7 @@
 
 #include "client.hpp"
 #include "client_game.hpp"
+#include "board_manager.hpp"
 
 int main(){
     int sd;
@@ -26,9 +27,7 @@ int main(){
     const int PORT = 2065;
 
     std::vector<std::vector<std::string>> board;
-    board = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "-"));
-    std::vector<int> shot(2);
-    
+    board = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "-"));    
     sd = socket(AF_INET, SOCK_STREAM, 0);
 
     if(sd == -1){
@@ -65,49 +64,18 @@ int main(){
             recv(sd, buffer, sizeof(buffer), 0); //RECIBO DE DATOS
 
             std::string stringBuffer = buffer;
-
+        
             std::string startingString = "+Ok. Empieza la partida.";
-            std::string waterString = "+Ok. AGUA: ";
-            std::string hittedString = "+Ok. TOCADO: ";
-            std::string sinkedString = "+Ok. HUNDIDO: ";
             size_t pos;
 
             if((pos = stringBuffer.find(startingString)) != std::string::npos) {
-                
                 std::cout << startingString << std::endl << std::endl;
                 std::string formatTable = stringBuffer.substr(pos + startingString.length());
                 std::vector<std::vector<std::string>> my_board;
                 parseBoard(formatTable, my_board);
                 stringBuffer = showBoard(my_board);
-
-            }else if((pos = stringBuffer.find(waterString)) != std::string::npos){
-                
-                std::cout << stringBuffer << std::endl << std::endl;
-                std::string coords = stringBuffer.substr(pos + waterString.length());
-                getCoords(coords, shot);
-
-                if(board[shot[1]][shot[0]] == "-")
-                    board[shot[1]][shot[0]] = "A";
-
-                stringBuffer = showBoard(board);
-
-            }else if((pos = stringBuffer.find(hittedString)) != std::string::npos){
-                
-                std::cout << stringBuffer << std::endl << std::endl;
-                std::string coords = stringBuffer.substr(pos + hittedString.length());
-                getCoords(coords, shot);
-                board[shot[1]][shot[0]] = "X";
-                stringBuffer = showBoard(board);
-
-            }else if((pos = stringBuffer.find(sinkedString)) != std::string::npos){
-                
-                std::cout << stringBuffer << std::endl << std::endl;
-                std::string coords = stringBuffer.substr(pos + sinkedString.length());
-                getCoords(coords, shot);
-                board[shot[1]][shot[0]] = "X";
-                sinkShip(board, shot);
-                stringBuffer = showBoard(board);
-
+            }else{
+                manageReponse(stringBuffer, board);
             }
             
             std::cout << std::endl << stringBuffer << std::endl;
