@@ -29,7 +29,6 @@ class Game{
         inline void setP2(Player p2){p2_ = p2;}
 
         void createGame(int &sizeBuffer);
-        void clearBoards();
 
         bool shot(std::vector<int> &shot, std::string &coords, int &sizeBuffer);
 };

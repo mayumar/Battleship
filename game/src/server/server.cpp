@@ -173,12 +173,8 @@ void setServer(){
                                 FD_SET(newSd, &readfs);
                                 strcpy(buffer, "+OK. Usuario conectado\n");
                                 send(newSd, buffer, sizeof(buffer), 0);
-                                
-                                // for(j = 0; j < (numClients-1); j++){
-                                //     bzero(buffer, sizeof(buffer));
-                                //     sprintf(buffer, "Nuevo jugador conectado <%d>", newSd);
-                                //     send(clientsArray[j], buffer, sizeof(buffer), 0);
-                                // }
+
+                                std::cout << "Nuevo jugador conectado <" << newSd << ">" << std::endl;
 
                             } else {
                                 bzero(buffer, sizeof(buffer));

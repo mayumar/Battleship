@@ -26,16 +26,6 @@ void Game::createGame(int &sizeBuffer){
     send(p2_.getSocket(), stringBufferP2.data(), sizeBuffer, 0);
 }
 
-void Game::clearBoards(){
-    for(int i = 0; i < boardp1_.getTable().size(); i++)
-        for(int j = 0; j < boardp1_.getTable()[j].size(); j++)
-            boardp1_.getTable()[i][j] = "-";
-
-    for(int i = 0; i<boardp2_.getTable().size(); i++)
-        for(int j = 0; j < boardp2_.getTable()[j].size(); j++)
-            boardp2_.getTable()[i][j] = "-";
-}
-
 bool Game::shot(std::vector<int> &shot, std::string &coords, int &sizeBuffer){
     std::string buffer;
 
