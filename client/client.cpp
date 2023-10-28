@@ -24,7 +24,6 @@ int main(){
     fd_set readfds, auxfds;
     int exitSelect;
     bool end = false;
-    const int PORT = 2065;
 
     std::vector<std::vector<std::string>> my_board, board, p2Board;
     board = std::vector<std::vector<std::string>>(10, std::vector<std::string>(10, "-"));
@@ -114,6 +113,6 @@ int main(){
         }
     }while(!end);
 
-    // close(sd);
+    close(sd);
     return 0;
 }

@@ -38,7 +38,7 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
     strcpy(buffer, "+Ok. Tu oponente ha terminado la partida.\n");
 
     auto itGame = findInList(games, searchPlayer(players, socket));    
-
+    
     removePlayerFromList(players, socket);
     
     if(isInQueue(waitingPlayers, socket))
