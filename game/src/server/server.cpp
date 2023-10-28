@@ -177,7 +177,7 @@ void setServer(){
 
                                     managedCommand(buffer, sizeBuffer, i, p, players);
 
-                                }else if(strcmp(buffer, "INICIAR-PARTIDA\n") == 0 && !p.isPlaying()) {
+                                } else if(strcmp(buffer, "INICIAR-PARTIDA\n") == 0 && !p.isPlaying()) {
                                     
                                     if(waitingPlayers.empty()){
 
@@ -230,12 +230,16 @@ void setServer(){
                                         gameOver = ("+Ok. " + game.getP2().getUsername() + " ha ganado\n");
                                         game.getP1().setIsPlaying(false);
                                         game.getP2().setIsPlaying(false);
+                                        players.remove(p);
                                         p.setIsPlaying(false);
+                                        players.push_back(p);
                                     }else if(game.getBoardp2().getshipsAlive() == 0){
                                         gameOver = ("+Ok. " + game.getP1().getUsername() + " ha ganado\n");
                                         game.getP1().setIsPlaying(false);
                                         game.getP2().setIsPlaying(false);
+                                        players.remove(p);
                                         p.setIsPlaying(false);
+                                        players.push_back(p);
                                     }
                                    
                                     send(game.getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
