@@ -44,21 +44,20 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
     if(isInQueue(waitingPlayers, socket))
         removeFromQueue(waitingPlayers, socket);
 
-    if(itGame->getP1().getSocket() == socket){
-
-        auto p = searchPlayer(players, itGame->getP2().getSocket());
-        send(p.getSocket(), buffer, sizeof(buffer), 0);
-        auto itPlayer = findInList(players, p);
-        itPlayer->setIsPlaying(false);
-
-    }else if(itGame->getP2().getSocket() == socket){
-        auto p = searchPlayer(players, itGame->getP1().getSocket());
-        send(p.getSocket(), buffer, sizeof(buffer), 0);
-        auto itPlayer = findInList(players, p);
-        itPlayer->setIsPlaying(false);
+    if(itGame != games.end()){
+        if(itGame->getP1().getSocket() == socket){
+            auto p = searchPlayer(players, itGame->getP2().getSocket());
+            send(p.getSocket(), buffer, sizeof(buffer), 0);
+            auto itPlayer = findInList(players, p);
+            itPlayer->setIsPlaying(false);
+        }else if(itGame->getP2().getSocket() == socket){
+            auto p = searchPlayer(players, itGame->getP1().getSocket());
+            send(p.getSocket(), buffer, sizeof(buffer), 0);
+            auto itPlayer = findInList(players, p);
+            itPlayer->setIsPlaying(false);
+        }
+        games.erase(itGame);
     }
-
-    games.erase(itGame);
 
 }
 
