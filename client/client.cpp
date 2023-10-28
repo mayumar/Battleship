@@ -39,9 +39,6 @@ int main(){
 	sockName.sin_port = htons(PORT);
 	sockName.sin_addr.s_addr =  inet_addr("127.0.0.1"); //127.0.0.1
 
-	/* ------------------------------------------------------------------
-		Se solicita la conexión con el servidor
-	-------------------------------------------------------------------*/
 	sockNameLen = sizeof(sockName);
 	
 	if(connect(sd, (struct sockaddr *)&sockName, sockNameLen) == -1){
@@ -61,7 +58,7 @@ int main(){
 
         if(FD_ISSET(sd, &auxfds)){
             bzero(buffer, sizeof(buffer));
-            recv(sd, buffer, sizeof(buffer), 0); //RECIBO DE DATOS
+            recv(sd, buffer, sizeof(buffer), 0);
 
             std::string stringBuffer = buffer;
         

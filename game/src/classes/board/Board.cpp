@@ -30,8 +30,6 @@ void Board::setStartGame(){
     bool flag = false;
     int o;
 
-    //std::cout << "Creating ships..." << std::endl << std::endl;
-
     do{
         o = rand()%2;
         if(o == 0){
@@ -50,10 +48,6 @@ void Board::setStartGame(){
 
 
     }while(!flag);
-
-    //showBoard();
-
-    //std::cout << "Creating medium ships..." << std::endl;
 
     for(int i = 0; i < 2; i++){
         flag = false;
@@ -77,11 +71,7 @@ void Board::setStartGame(){
             
         }while(!flag);
 
-    //showBoard();
-
     }
-
-    //std::cout << "Creating short ships..." << std::endl;
 
     for(int i = 0; i < 2; i++){
         flag = false;
@@ -105,8 +95,6 @@ void Board::setStartGame(){
             
         }while(!flag);
 
-    //showBoard();
-
     }
 }
 
@@ -118,35 +106,30 @@ bool Board::checkShipPosition(Ship &ship){
         coord = ship.getCoordsEdge1()[0]-1;
         
         if(coord >= 0 && table_[ship.getCoordsEdge1()[1]][coord] == "B"){
-            //std::cout << "B en (" << coord << "," << ship.getCoordsEdge1()[1] << ")" << std::endl;
             return false;
         }
 
         coord = ship.getCoordsEdge2()[0]+1;
         
         if(coord < 10 && table_[ship.getCoordsEdge2()[1]][coord] == "B"){
-            //std::cout << "B en (" << coord << "," << ship.getCoordsEdge2()[1] << ")" << std::endl;
             return false;
         }
 
         for(int row = ship.getCoordsEdge1()[0]; row <= ship.getCoordsEdge2()[0]; row++){
 
             if(table_[ship.getCoordsEdge1()[1]][row] == "B"){
-                //std::cout << "B en (" << row << "," << ship.getCoordsEdge1()[1] << ")" << std::endl;
                 return false;
             }
 
             coord = ship.getCoordsEdge1()[1]+1;
            
             if(coord < 10 && table_[coord][row] == "B"){
-                //std::cout << "B en (" << row << "," << coord << ")" << std::endl;
                 return false;
             }
 
             coord = ship.getCoordsEdge1()[1]-1;
            
             if(coord >= 0 && table_[coord][row] == "B"){
-                //std::cout << "B en (" << row << "," << coord << ")" << std::endl;
                 return false;
             }
         
@@ -156,14 +139,12 @@ bool Board::checkShipPosition(Ship &ship){
         coord = ship.getCoordsEdge1()[1]-1;
 
         if(coord >= 0 && table_[coord][ship.getCoordsEdge1()[0]] == "B"){
-            //std::cout << "B en (" << ship.getCoordsEdge1()[0] << "," << coord << ")" << std::endl;
             return false;
         }
 
         coord  = ship.getCoordsEdge2()[1]+1;
         
         if(coord < 10 && table_[coord][ship.getCoordsEdge2()[0]] == "B"){
-            //std::cout << "B en (" << ship.getCoordsEdge2()[0] << "," << coord << ")" << std::endl;
             return false;
         }
 
@@ -172,14 +153,12 @@ bool Board::checkShipPosition(Ship &ship){
             coord = ship.getCoordsEdge1()[0]+1;
            
             if(coord < 10 && table_[col][coord] == "B"){
-                //std::cout << "B en (" << coord << "," << col << ")" << std::endl;
                 return false;
             }
 
             coord = ship.getCoordsEdge1()[0]-1;
            
             if(coord >= 0 && table_[col][coord] == "B"){
-                //std::cout << "B en (" << coord << "," << col << ")" << std::endl;
                 return false;
             }
     
@@ -260,6 +239,7 @@ bool Board::isSinked(Ship ship){
     return false;
 }
 
+//Esto se ha usado para hacer pruebas
 void Board::showServerBoard(){
     std::cout << "   │ A B C D E F G H I J │ " << std::endl;
     std::cout << "───┼─────────────────────┼─" << std::endl;
