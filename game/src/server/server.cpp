@@ -16,10 +16,8 @@
 #include "../commands/commands.hpp"
 #include "../classes/game/Game.hpp"
 
-#define MSG_SIZE 250
-#define MAX_CLIENTS 30
-
-void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], std::list<Game> &games, std::list<Player> &players){
+void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[], 
+                std::list<Game> &games, std::list<Player> &players, std::queue<Player> &waitingPlayers){
     char buffer[MSG_SIZE];
     int j;
 
@@ -37,11 +35,14 @@ void exitClient(int socket, fd_set * readfds, int &numClients, int clientsArray[
     numClients--;
 
     bzero(buffer, sizeof(buffer));
-    strcpy(buffer, "+Ok. Tu oponente se ha desconectado.\n");
+    strcpy(buffer, "+Ok. Tu oponente ha terminado la partida.\n");
 
     auto itGame = findInList(games, searchPlayer(players, socket));    
 
     removePlayerFromList(players, socket);
+    
+    if(isInQueue(waitingPlayers, socket))
+        removeFromQueue(waitingPlayers, socket);
 
     if(itGame->getP1().getSocket() == socket){
 
@@ -68,11 +69,40 @@ void manager(int signum){
     //Implementar lo que se desee realizar cuando ocurra la excepción de ctrl+c en el servidor
 }
 
+void gameOver(int &sizeBuffer, Player &p, std::list<Player> &players, std::list<Game> &games){
+    std::string gameOver;
+
+    auto itGame = findInList(games, p);
+
+    if(itGame->getBoardp1().getshipsAlive() == 0){
+        gameOver = ("+Ok. " + itGame->getP2().getUsername() + " ha ganado, número de disparos " +
+                    std::to_string(itGame->getP2Shots()) + "\n");
+
+        auto itWinner = findInList(players, itGame->getP2());
+        itWinner->setIsPlaying(false);
+        auto itLoser = findInList(players, itGame->getP1());
+        itLoser->setIsPlaying(false);
+        send(itGame->getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
+        send(itGame->getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
+        games.erase(itGame);
+    } else if(itGame->getBoardp2().getshipsAlive() == 0){
+        gameOver = ("+Ok. " + itGame->getP1().getUsername() + " ha ganado, número de disparos " +
+                    std::to_string(itGame->getP1Shots()) + "\n");
+
+        auto itWinner = findInList(players, itGame->getP1());
+        itWinner->setIsPlaying(false);
+        auto itLoser = findInList(players, itGame->getP2());
+        itLoser->setIsPlaying(false);
+        send(itGame->getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
+        send(itGame->getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
+        games.erase(itGame);
+    }
+}
+
 void setServer(){
     int sd, newSd;
     struct sockaddr_in socnkName, from;
     char buffer[MSG_SIZE];
-    const int PORT = 2065;
 
     socklen_t fromLen;
     fd_set readfs, auxfds;
@@ -114,7 +144,6 @@ void setServer(){
 
     fromLen = sizeof(from);
     
-
     if(listen(sd, 1) == -1){
         std::cerr << "Error al escuchar" << std::endl;
         exit(1);
@@ -191,64 +220,40 @@ void setServer(){
 
                                     managedCommand(buffer, sizeBuffer, i, p, players);
 
-                                } else if(!p.isPlaying()) {
+                                } else if(strcmp(buffer, "INICIAR-PARTIDA\n") == 0 && !p.isPlaying()) {
                                     
-                                    managedGameCommands(buffer, sizeBuffer, i, *itGame, players, waitingPlayers, games, p, p2);
+                                    setGame(buffer, sizeBuffer, players, waitingPlayers, games, p, p2);
                                     
                                 } else if(p.isPlaying()) {
 
                                     if(itGame->getTurn() == 1){
+                                        strcpy(buffer, "+Ok. Turno de partida.\n");
+                                        send(itGame->getP1().getSocket(), buffer, sizeBuffer, 0);
                                         if(itGame->getP2().getSocket() == i){
                                             strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
                                         }else{
-                                            managedGameCommands(buffer, sizeBuffer, i, *itGame, players, waitingPlayers, games, p, p2);
-                                            if(strcmp(buffer, "-Err. Comando incorrecto") == -1){
-                                                strcpy(buffer, "+Ok. Turno de partida.\n");
-                                                send(itGame->getP2().getSocket(), buffer, sizeBuffer, 0);
-                                            }
+                                            managedGameCommands(buffer, sizeBuffer, i, *itGame);
                                         }
                                     }else if(itGame->getTurn() == 2){
+                                        strcpy(buffer, "+Ok. Turno de partida.\n");
+                                        send(itGame->getP2().getSocket(), buffer, sizeBuffer, 0);
                                         if(itGame->getP1().getSocket() == i){
                                             strcpy(buffer, "-Err. Debe esperar su turno.\n");
                                             send(i, buffer, sizeBuffer, 0);
                                         }else{
-                                            managedGameCommands(buffer, sizeBuffer, i, *itGame, players, waitingPlayers, games, p, p2);
-                                            if(strcmp(buffer, "-Err. Comando incorrecto") == -1){
-                                                strcpy(buffer, "+Ok. Turno de partida.\n");
-                                                send(itGame->getP1().getSocket(), buffer, sizeBuffer, 0);
-                                            }
+                                            managedGameCommands(buffer, sizeBuffer, i, *itGame);
                                         }
                                     }
 
-                                    std::string gameOver;
-
-                                    if(itGame->getBoardp1().getshipsAlive() == 0){
-                                        gameOver = ("+Ok. " + itGame->getP2().getUsername() + " ha ganado\n");
-                                        auto itWinner = findInList(players, itGame->getP2());
-                                        itWinner->setIsPlaying(false);
-                                        auto itLoser = findInList(players, itGame->getP1());
-                                        itLoser->setIsPlaying(false);
-                                        send(itGame->getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
-                                        send(itGame->getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
-                                        games.erase(itGame);
-                                    } else if(itGame->getBoardp2().getshipsAlive() == 0){
-                                        gameOver = ("+Ok. " + itGame->getP1().getUsername() + " ha ganado\n");
-                                        auto itWinner = findInList(players, itGame->getP1());
-                                        itWinner->setIsPlaying(false);
-                                        auto itLoser = findInList(players, itGame->getP2());
-                                        itLoser->setIsPlaying(false);
-                                        send(itGame->getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
-                                        send(itGame->getP2().getSocket(), gameOver.data(), sizeBuffer, 0);
-                                        games.erase(itGame);
-                                    }
+                                    gameOver(sizeBuffer, p, players, games);
                                 
                                 }
                                 
-                            } else exitClient(i, &readfs, numClients, clientsArray, games, players);
+                            } else exitClient(i, &readfs, numClients, clientsArray, games, players, waitingPlayers);
                         } else if(received == 0){
                             std::cout << "El jugador <" << i << "> ha salido del juego" << std::endl;
-                            exitClient(i, &readfs, numClients, clientsArray, games, players);
+                            exitClient(i, &readfs, numClients, clientsArray, games, players, waitingPlayers);
                         }
                     }      
                 }

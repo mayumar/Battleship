@@ -2,3 +2,5 @@ paco;1234
 mayte;5678
 nuri;nuri
 pedro;pedro
+amelia;amelia
+patata;patata

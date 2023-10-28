@@ -12,6 +12,8 @@ class Game{
         Board boardp1_;
         Board boardp2_;
         int turn_;
+        int p1Shots_;
+        int p2Shots_;
         
     public:
         inline Game() {};
@@ -20,6 +22,8 @@ class Game{
         inline Player getP1(){return p1_;}
         inline Player getP2(){return p2_;}
         inline int getTurn(){return turn_;}
+        inline int getP1Shots(){return p1Shots_;}
+        inline int getP2Shots(){return p2Shots_;}
 
         inline void setP1(Player p1){p1_ = p1;}
         inline void setP2(Player p2){p2_ = p2;}

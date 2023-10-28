@@ -13,10 +13,11 @@ void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Playe
 void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &layers, std::istringstream &stream, Player &p);
 void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &players, std::istringstream &stream, Player &p);
 void helpCommand(char *buffer, int &sizeBuffer, int &client);
+void setGame(char *buffer, int &sizeBuffer, std::list<Player> &players, std::queue<Player> &waitingPlayers, std::list<Game> &games, Player &p, Player &p2);
 
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
                     std::list<Player> &players);
 
-void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game, std::list<Player> &players, std::queue<Player> &waitingPlayers, std::list<Game> &games, Player &p, Player &p2);
+void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game);
 
 #endif

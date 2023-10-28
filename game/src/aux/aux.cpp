@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <list>
+#include <queue>
 
 #include "aux.hpp"
 #include "../classes/player/Player.hpp"
@@ -69,4 +70,29 @@ void removePlayerFromList(std::list<Player> &players, int &sd){
 void removeGameFromList(std::list<Game> &games, Player p){
     auto g = findInList(games, p);
     games.erase(g);
+}
+
+bool isInQueue(std::queue<Player> &waitingPlayers, int &socket){
+    auto tempQueue = waitingPlayers;
+    
+    while(!tempQueue.empty()){
+        auto pAux = tempQueue.front();
+        tempQueue.pop();
+        if(pAux.getSocket() == socket)
+            return true;
+    }
+
+    return false;
+}
+
+void removeFromQueue(std::queue<Player> &waitingPlayers, int &socket){
+    std::queue<Player> tempQueue;
+    while(!waitingPlayers.empty()){
+        auto pAux = waitingPlayers.front();
+        waitingPlayers.pop();
+        if(pAux.getSocket() != socket) 
+            tempQueue.push(pAux);
+    }
+
+    waitingPlayers = tempQueue;
 }

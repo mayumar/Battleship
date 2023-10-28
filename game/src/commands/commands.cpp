@@ -54,7 +54,7 @@ void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Playe
         return;
     }
     
-    strcpy(buffer, "+Ok. Usuario valido.\n");
+    strcpy(buffer, "+Ok. Usuario validado.\n");
     auto it = findInList(players, p);
     it->setPassword(password);
     it->setIsLogin(true);
@@ -69,7 +69,7 @@ void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player>
     stream >> option >> username >> option >> password;
 
     if(username == "" || password == ""){
-        strcpy(buffer, "-Err. Error al registrar usuario.\n");
+        strcpy(buffer, "-Err. Falta indicar username o password.\n");
         send(client, buffer, sizeBuffer, 0);
         return;
     }
@@ -93,15 +93,48 @@ void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player>
 
 void helpCommand(char *buffer, int &sizeBuffer, int &client) {
     std::string helpMessage = "USUARIO <usuario>\n"
-                                  "PASSWORD <password>\n"
-                                  "REGISTRO -u <usuario> -p <password>\n"
-                                  "INICIAR-PARTIDA\n"
-                                  "DISPARO <letra> <numero>\n"
-                                  "SALIR\n";
+                              "PASSWORD <password>\n"
+                              "REGISTRO -u <usuario> -p <password>\n"
+                              "INICIAR-PARTIDA\n"
+                              "DISPARO <letra> <numero>\n"
+                              "SALIR\n";
 
     strcpy(buffer, helpMessage.data());
     send(client, buffer, sizeBuffer, 0);
     return;
+}
+
+void setGame(char *buffer, int &sizeBuffer, std::list<Player> &players, std::queue<Player> &waitingPlayers, std::list<Game> &games, Player &p, Player &p2) {
+    if(waitingPlayers.empty()){
+
+        strcpy(buffer, "+Ok. Esperando jugadores\n");
+        waitingPlayers.push(p);
+        send(p.getSocket(), buffer, sizeBuffer, 0);
+
+    } else if(games.size() > 10){
+
+        strcpy(buffer, "-Err. Demasiadas partidas simultaneas\n");
+        send(p.getSocket(), buffer, sizeBuffer, 0);
+
+    } else {
+
+        Game game;
+        p2 = waitingPlayers.front();
+        waitingPlayers.pop();
+
+        auto it = findInList(players, p);
+        it->setIsPlaying(true);
+        it = findInList(players, p2);
+        it->setIsPlaying(true);
+
+        p.setIsPlaying(true);
+        p2.setIsPlaying(true);
+        game.setP1(p2);
+        game.setP2(p);
+        game.createGame(sizeBuffer);
+        games.push_back(game);
+        
+    }
 }
 
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
@@ -134,9 +167,7 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     }
 }
 
-void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game, 
-                         std::list<Player> &players, std::queue<Player> &waitingPlayers, std::list<Game> &games, 
-                         Player &p, Player &p2){
+void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game){
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
@@ -159,35 +190,7 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game,
 
     upper(command);
 
-    if(command == "INICIAR-PARTIDA"){
-        if(waitingPlayers.empty()){
-
-            strcpy(buffer, "+Ok. Esperando jugadores\n");
-            waitingPlayers.push(p);
-            send(p.getSocket(), buffer, sizeBuffer, 0);
-
-        } else {
-
-            Game game;
-            p2 = waitingPlayers.front();
-            waitingPlayers.pop();
-
-            auto it = findInList(players, p);
-            it->setIsPlaying(true);
-            it = findInList(players, p2);
-            it->setIsPlaying(true);
-
-            p.setIsPlaying(true);
-            p2.setIsPlaying(true);
-            game.setP1(p2);
-            game.setP2(p);
-            game.createGame(sizeBuffer);
-            games.push_back(game);
-            strcpy(buffer, "+Ok. Turno de partida.\n");
-            send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
-
-        }
-    } else if(command == "DISPARO"){
+    if(command == "DISPARO"){
         std::string coords, word, numSTR;
         stream >> coords;
         upper(coords);
@@ -217,13 +220,16 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game,
 
         sprintf(buffer, "+Ok. Disparo en: %s,%d.\n", word.data(), num);
 
-        if(game.getP1().getSocket() == client)
+        if(game.getP1().getSocket() == client){
             send(game.getP2().getSocket(), buffer, sizeBuffer, 0);
-        else if(game.getP2().getSocket() == client)
+        }else if(game.getP2().getSocket() == client){
             send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
+        }
 
-        game.shot(realCoords, coords, sizeBuffer);
+        game.shot(realCoords, coords, sizeBuffer);        
         return;
+    } else if(command == "HELP") {
+        helpCommand(buffer, sizeBuffer, client);
     } else {
         strcpy(buffer, "-Err. Comando incorrecto.\n");
         send(client, buffer, sizeBuffer, 0);

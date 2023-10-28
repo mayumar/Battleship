@@ -4,6 +4,7 @@
 #include <ctime>
 #include <vector>
 #include <list>
+#include <queue>
 
 #include "../classes/player/Player.hpp"
 #include "../classes/game/Game.hpp"
@@ -16,5 +17,8 @@ Player searchPlayer(std::list<Player> &players, int sd);
 void removePlayerFromList(std::list<Player> &players, int &sd);
 std::list<Player>::iterator findInList(std::list<Player> &players, Player p);
 std::list<Game>::iterator findInList(std::list<Game> &games, Player p);
+
+bool isInQueue(std::queue<Player> &waitingPlayers, int &socket);
+void removeFromQueue(std::queue<Player> &waitingPlayers, int &socket);
 
 #endif

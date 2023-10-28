@@ -65,7 +65,7 @@ bool loginPass(std::string password){
 }
 
 Player signup(std::string username, std::string password, int socket){
-    if(loginUsername(username) && loginPass(password))
+    if(loginUsername(username))
         return Player();
 
     std::ofstream file("../src/files/users.txt", std::ios::app);
