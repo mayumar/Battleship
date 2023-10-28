@@ -9,6 +9,8 @@
 #include "../classes/player/Player.hpp"
 #include "../classes/game/Game.hpp"
 
+bool checkCommands(char *buffer);
+
 void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &players, std::istringstream &stream, Player &p);
 void passwordCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &layers, std::istringstream &stream, Player &p);
 void signupCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &players, std::istringstream &stream, Player &p);

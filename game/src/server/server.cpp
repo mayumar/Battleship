@@ -206,7 +206,10 @@ void setServer(){
                         received = recv(i, buffer, sizeof(buffer), 0);
 
                         if(received > 0){
-                            if(strcmp(buffer, "SALIR\n") != 0){
+                            if(!checkCommands(buffer)) {
+                                strcpy(buffer, "-Err. Comando incorrecto.\n");
+                                send(i, buffer, sizeof(buffer), 0);
+                            } else if(strcmp(buffer, "SALIR\n") != 0){
                                 int sizeBuffer = sizeof(buffer);
                                 p = searchPlayer(players, i);
                                 auto itGame = findInList(games, p);

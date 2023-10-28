@@ -9,6 +9,32 @@
 #include "../server/server.hpp"
 #include "../classes/player/Player.hpp"
 
+bool checkCommands(char *buffer) {
+    std::string stringBuffer = buffer;
+    cleanString(stringBuffer);
+
+    std::istringstream stream(stringBuffer);
+    std::string command;
+    stream >> command;
+
+    upper(command);
+
+    std::vector<std::string> validCommads = {
+        "USUARIO",
+        "PASSWORD",
+        "REGISTRO",
+        "INICIAR-PARTIDA",
+        "DISPARO",
+        "SALIR"
+    };
+
+    for (auto validCommand : validCommads)
+        if(validCommand == command)
+            return true;
+
+    return false;
+}
+
 void userCommand(int &client, char *buffer, int &sizeBuffer, std::list<Player> &players,
                  std::istringstream &stream, Player &p) {
     std::string username;
@@ -142,6 +168,12 @@ void setGame(char *buffer, int &sizeBuffer, std::list<Player> &players, std::que
 
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
                     std::list<Player> &players){
+    
+    if(!checkCommands(buffer)) {
+        strcpy(buffer, "-Err. Comando incorrecto.\n");
+        send(client, buffer, sizeBuffer, 0);
+    }
+
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
@@ -150,6 +182,7 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     stream >> command;
 
     upper(command);
+
     
     bzero(buffer, sizeBuffer);
 
@@ -164,13 +197,16 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     else if(command == "INICIAR-PARTIDA") {
         strcpy(buffer, "-Err. El usuario no esta logueado.\n");
         send(client, buffer, sizeBuffer, 0);
-    } else {
-        strcpy(buffer, "-Err. Comando incorrecto.\n");
-        send(client, buffer, sizeBuffer, 0);
     }
 }
 
 void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game){
+    
+    if(!checkCommands(buffer)) {
+        strcpy(buffer, "-Err. Comando incorrecto.\n");
+        send(client, buffer, sizeBuffer, 0);
+    }
+
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
@@ -192,6 +228,7 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
     stream >> command;
 
     upper(command);
+
 
     if(command == "DISPARO"){
         std::string coords, word, numSTR;
@@ -238,10 +275,5 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
         }
 
         return;
-    } else if(command == "HELP") {
-        helpCommand(buffer, sizeBuffer, client);
-    } else {
-        strcpy(buffer, "-Err. Comando incorrecto.\n");
-        send(client, buffer, sizeBuffer, 0);
-    }
+    } else if(command == "HELP") helpCommand(buffer, sizeBuffer, client);
 }
