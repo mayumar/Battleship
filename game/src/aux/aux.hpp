@@ -10,6 +10,7 @@
 
 void generateRandomCoords(std::vector<int> &coords);
 void cleanString(std::string &cad);
+void upper(std::string &s);
 //void addLoginPlayer(std::list<Player> &loginPlayers, Player &player);
 Player searchPlayer(std::list<Player> &players, int sd);
 void removePlayerFromList(std::list<Player> &players, int &sd);

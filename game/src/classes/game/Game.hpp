@@ -27,7 +27,7 @@ class Game{
         void createGame(int &sizeBuffer);
         void clearBoards();
 
-        bool shot(std::vector<int> shot, std::string coords, int &sizeBuffer);
+        bool shot(std::vector<int> &shot, std::string &coords, int &sizeBuffer);
 };
 
 #endif

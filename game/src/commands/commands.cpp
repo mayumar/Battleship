@@ -112,6 +112,8 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     std::istringstream stream(stringBuffer);
     std::string command;
     stream >> command;
+
+    upper(command);
     
     bzero(buffer, sizeBuffer);
 
@@ -132,7 +134,9 @@ void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
     }
 }
 
-void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game){
+void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game, 
+                         std::list<Player> &players, std::queue<Player> &waitingPlayers, std::list<Game> &games, 
+                         Player &p, Player &p2){
     std::string stringBuffer = buffer;
     cleanString(stringBuffer);
 
@@ -153,15 +157,60 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
     std::string command;
     stream >> command;
 
-    if(command == "DISPARO"){
+    upper(command);
+
+    if(command == "INICIAR-PARTIDA"){
+        if(waitingPlayers.empty()){
+
+            strcpy(buffer, "+Ok. Esperando jugadores\n");
+            waitingPlayers.push(p);
+            send(p.getSocket(), buffer, sizeBuffer, 0);
+
+        } else {
+
+            Game game;
+            p2 = waitingPlayers.front();
+            waitingPlayers.pop();
+
+            auto it = findInList(players, p);
+            it->setIsPlaying(true);
+            it = findInList(players, p2);
+            it->setIsPlaying(true);
+
+            p.setIsPlaying(true);
+            p2.setIsPlaying(true);
+            game.setP1(p2);
+            game.setP2(p);
+            game.createGame(sizeBuffer);
+            games.push_back(game);
+            strcpy(buffer, "+Ok. Turno de partida.\n");
+            send(game.getP1().getSocket(), buffer, sizeBuffer, 0);
+
+        }
+    } else if(command == "DISPARO"){
         std::string coords, word, numSTR;
         stream >> coords;
+        upper(coords);
 
         std::istringstream ss(coords);
-        std::getline(ss, word, ',');
-        std::getline(ss, numSTR);
+        // std::getline(ss, word, ',');
+        // std::getline(ss, numSTR);
+
+        if(!std::getline(ss, word, ',') || !std::getline(ss, numSTR) || !std::isdigit(numSTR[0]) || std::isdigit(word[0])){
+            strcpy(buffer, "-Err. Ha introducido mal las coordenadas.\n");
+            send(client, buffer, sizeBuffer, 0);
+            return;
+        }
+
+        upper(word);
 
         int num = std::stoi(numSTR);
+
+        if(num <= 0 || num >= 11){
+            strcpy(buffer, "-Err. Ha introducido mal las coordenadas.\n");
+            send(client, buffer, sizeBuffer, 0);
+            return;
+        }
 
         std::vector<int> realCoords = {num-1, coordsMap[word]}; //VECTOR CON LAS COORDENADAS
                                                                 //Va al revés por culpa de C++
@@ -175,5 +224,8 @@ void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game)
 
         game.shot(realCoords, coords, sizeBuffer);
         return;
-    }    
+    } else {
+        strcpy(buffer, "-Err. Comando incorrecto.\n");
+        send(client, buffer, sizeBuffer, 0);
+    }
 }

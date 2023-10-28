@@ -17,6 +17,6 @@ void helpCommand(char *buffer, int &sizeBuffer, int &client);
 void managedCommand(char *buffer, int &sizeBuffer, int &client, Player &p,
                     std::list<Player> &players);
 
-void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game);
+void managedGameCommands(char *buffer, int &sizeBuffer, int &client, Game &game, std::list<Player> &players, std::queue<Player> &waitingPlayers, std::list<Game> &games, Player &p, Player &p2);
 
 #endif

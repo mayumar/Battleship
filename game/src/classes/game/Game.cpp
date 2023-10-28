@@ -36,8 +36,10 @@ void Game::clearBoards(){
             boardp2_.getTable()[i][j] = "-";
 }
 
-bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
+bool Game::shot(std::vector<int> &shot, std::string &coords, int &sizeBuffer){
     std::string buffer;
+
+    coords[0] = std::toupper(coords[0]);
 
     if(turn_ == 1){
         if(boardp2_.getTable()[shot[1]][shot[0]] == "B"){
@@ -66,8 +68,6 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
             return false;
         }
 
-        
-
     }else if(turn_ == 2){
 
         if(boardp1_.getTable()[shot[1]][shot[0]] == "B"){
@@ -93,9 +93,6 @@ bool Game::shot(std::vector<int> shot, std::string coords, int &sizeBuffer){
             turn_ = 1;
             return false;
         }
-
-        
-
     }
 
     return false;

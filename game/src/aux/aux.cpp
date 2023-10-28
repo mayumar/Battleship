@@ -22,6 +22,11 @@ void cleanString(std::string &cad){
     }
 }
 
+void upper(std::string &s){
+    for(int i = 0; i < s.size(); i++) 
+        s[i] = std::toupper(s[i]);
+}
+
 Player searchPlayer(std::list<Player> &players, int sd){
     for(auto p : players)
         if(p.getSocket() == sd) return p;
