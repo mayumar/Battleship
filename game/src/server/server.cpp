@@ -227,16 +227,34 @@ void setServer(){
                                         gameOver = ("+Ok. " + game.getP2().getUsername() + " ha ganado\n");
                                         game.getP1().setIsPlaying(false);
                                         game.getP2().setIsPlaying(false);
-                                        players.remove(p);
-                                        p.setIsPlaying(false);
-                                        players.push_back(p);
-                                    }else if(game.getBoardp2().getshipsAlive() == 0){
+                                        // players.remove(p);
+                                        // p.setIsPlaying(false);
+                                        // players.push_back(p);
+                                        // p2 = searchPlayer(players, game.getP1().getSocket());
+                                        // players.remove(p2);
+                                        // p2.setIsPlaying(false);
+                                        // players.push_back(p2);
+                                        auto itWinner = findInList(players, game.getP2());
+                                        itWinner->setIsPlaying(false);
+                                        auto itLoser = findInList(players, game.getP1());
+                                        itLoser->setIsPlaying(false);
+                                        game.clearBoards();
+                                    } else if(game.getBoardp2().getshipsAlive() == 0){
                                         gameOver = ("+Ok. " + game.getP1().getUsername() + " ha ganado\n");
                                         game.getP1().setIsPlaying(false);
                                         game.getP2().setIsPlaying(false);
-                                        players.remove(p);
-                                        p.setIsPlaying(false);
-                                        players.push_back(p);
+                                        // players.remove(p);
+                                        // p.setIsPlaying(false);
+                                        // players.push_back(p);
+                                        // p2 = searchPlayer(players, game.getP2().getSocket());
+                                        // players.remove(p2);
+                                        // p2.setIsPlaying(false);
+                                        // players.push_back(p2);
+                                        auto itWinner = findInList(players, game.getP1());
+                                        itWinner->setIsPlaying(false);
+                                        auto itLoser = findInList(players, game.getP2());
+                                        itLoser->setIsPlaying(false);
+                                        game.clearBoards();
                                     }
                                    
                                     send(game.getP1().getSocket(), gameOver.data(), sizeBuffer, 0);
