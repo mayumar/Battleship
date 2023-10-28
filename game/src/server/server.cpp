@@ -189,9 +189,6 @@ void setServer(){
 
                                         p2 = waitingPlayers.front();
                                         waitingPlayers.pop();
-                                        // strcpy(buffer, "+Ok. Empieza la partida\n");
-                                        // send(p.getSocket(), buffer, sizeBuffer, 0);
-                                        // send(p2.getSocket(), buffer, sizeBuffer, 0);
 
                                         auto it = findInList(players, p);
                                         it->setIsPlaying(true);
