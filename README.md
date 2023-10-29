@@ -2,7 +2,7 @@
 
 ## Organización del proyecto
 
-La práctica se divide en dos ficheros:
+La práctica se divide en dos directorios:
 
 * `client`: Contiene todos el código necesario para el programa cliente.
 * `game`: Contiene tanto el código del juego como el del servidor al que se conectará el cliente.
