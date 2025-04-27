@@ -1,4 +1,4 @@
-# Práctica 2 Redes
+# Battleship
 
 ## Organización del proyecto
 
